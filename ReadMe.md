@@ -1,4 +1,4 @@
-# Coding Quiz Backend
+# Code Arena Backend
 
 ## Project Overview
 This project is a backend service for a Quizizz-like coding quiz platform. The system supports multiple coding languages (Python, C++, Java) and allows for both self-paced and multiplayer quizzes. It features a lobby for waiting, host-controlled game sessions, and real-time leaderboards.
