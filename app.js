@@ -1,17 +1,14 @@
-/***************************************************************************
- * app.js (Typical Express Generator Structure)
- ***************************************************************************/
-
+// app.js
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-//route files
+// Import your new auth route
+const authRoutes = require('./routes/auth');
 
 const app = express();
-
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -23,32 +20,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// If you have routes, mount them here:
+// Mount the auth routes under "/api/auth"
+app.use('/api/auth', authRoutes);
 
-
-/*
-  Catch 404 and forward to error handler
-*/
+// Catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-/*
-  Error Handler
-*/
+// Error handler
 app.use(function (err, req, res, next) {
-  // Set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // Render the error page (or send JSON if you prefer)
   res.status(err.status || 500);
   res.render('error');
 });
 
-/*
-  Export the Express app.
-  This is critical so that bin/www can import it,
-  set the port, attach Socket.IO, and call server.listen().
-*/
 module.exports = app;
