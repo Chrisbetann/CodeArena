@@ -4,9 +4,22 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+
+// Replace <username>, <password>, and <cluster-url> with your actual MongoDB Atlas details.
+const atlasURI = 'mongodb+srv://<username>:<password>@<cluster-url>/CodeArena?retryWrites=true&w=majority';
+
+mongoose.connect(atlasURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+    .then(() => console.log("Connected to MongoDB Atlas"))
+    .catch((err) => console.error("Failed to connect to MongoDB Atlas", err));
 
 // Import your new auth route
 const authRoutes = require('./routes/auth');
+const lobbyRoutes = require('./routes/lobby');
+const sessionRoutes = require('./routes/session');
 
 const app = express();
 
@@ -22,6 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount the auth routes under "/api/auth"
 app.use('/api/auth', authRoutes);
+app.use('/api/lobby', lobbyRoutes);
+app.use('/api/session', sessionRoutes);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

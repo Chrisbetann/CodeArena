@@ -3,7 +3,6 @@
 /**
  * Module dependencies.
  */
-
 var app = require('../app');
 var debug = require('debug')('untitled2:server');
 var http = require('http');
@@ -12,23 +11,42 @@ var socketIo = require('socket.io');
 /**
  * Get port from environment and store in Express.
  */
-
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
 
 /**
- * Attach Socket.IO to the server
+ * Attach Socket.IO to the server.
  */
 var io = socketIo(server);
 
+// Socket.IO connection handler
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
+
+  // Custom event: joinLobby
+  // When a client wants to join a lobby, they should emit 'joinLobby' with { lobbyCode, username }
+  socket.on('joinLobby', (data) => {
+    if (!data.lobbyCode || !data.username) {
+      console.error('joinLobby event received with missing data');
+      return;
+    }
+    console.log(`${data.username} is joining lobby ${data.lobbyCode}`);
+
+    // Join the specified room (lobby)
+    socket.join(data.lobbyCode);
+
+    // Broadcast to the room that a new user has joined
+    io.to(data.lobbyCode).emit('lobbyUpdate', {
+      message: `${data.username} has joined the lobby`
+    });
+  });
+
+  // Additional custom events can be added here (e.g., in-game events, answer submissions, etc.)
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
@@ -38,7 +56,6 @@ io.on('connection', (socket) => {
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port, () => {
   debug('Express server listening on port ' + port);
 });
@@ -68,9 +85,7 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-  var bind = typeof port === 'string'
-      ? 'Pipe ' + port
-      : 'Port ' + port;
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -90,8 +105,6 @@ function onError(error) {
  */
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
