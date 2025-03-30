@@ -27,3 +27,23 @@ In Sprint 2, we focused on setting up the backend authentication endpoints for h
     "password": "testpassword"
   }
 
+## Sprint 3: Multiplayer & Game Session Management
+
+**Overview:**  
+In Sprint 3, our focus is on enabling multiplayer functionality. We’re implementing features for lobby creation and management, host controls/game configuration, and game session management. This sprint lays the groundwork for real‑time gameplay by integrating Socket.IO for live updates.
+
+---
+
+### 1. Lobby Creation & Management
+
+**Endpoints Implemented:**
+
+- **Create Lobby**  
+  **URL:** `POST /api/lobby/create`  
+  **Request Body Example:**
+  ```json
+  {
+    "hostUsername": "HostName",
+    "settings": { "difficulty": "easy", "language": "Python" }
+  }
+
