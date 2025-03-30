@@ -6,8 +6,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 
-// Replace <username>, <password>, and <cluster-url> with your actual MongoDB Atlas details.
-const atlasURI = 'mongodb+srv://<username>:<password>@<cluster-url>/CodeArena?retryWrites=true&w=majority';
+// Updated MongoDB Atlas connection string with Nadia's credentials
+const atlasURI = 'mongodb+srv://caUser:sfac123@codearena.fo5no.mongodb.net/CodeArena?retryWrites=true&w=majority';
 
 mongoose.connect(atlasURI, {
   useNewUrlParser: true,
