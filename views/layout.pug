@@ -1,7 +1,9 @@
+//- views/layout.pug
 doctype html
 html
   head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    title CodeArena
+    //- other head content
   body
     block content
+    script(src="/socket.io/socket.io.js")
