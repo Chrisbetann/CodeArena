@@ -24,6 +24,9 @@ var server = http.createServer(app);
  */
 var io = socketIo(server);
 
+// Set Socket.IO instance on the Express app so it can be accessed in routes (e.g., in session.js)
+app.set('io', io);
+
 // Socket.IO connection handler
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
@@ -41,9 +44,7 @@ io.on('connection', (socket) => {
     socket.join(data.lobbyCode);
 
     // Broadcast to the room that a new user has joined
-    io.to(data.lobbyCode).emit('lobbyUpdate', {
-      message: `${data.username} has joined the lobby`
-    });
+    io.to(data.lobbyCode).emit('lobbyUpdate', { message: `${data.username} has joined the lobby` });
   });
 
   // Additional custom events can be added here (e.g., in-game events, answer submissions, etc.)

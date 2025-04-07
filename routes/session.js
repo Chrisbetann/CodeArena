@@ -7,7 +7,9 @@ let sessions = {};
 
 /**
  * Start a game session for a given lobby.
- * Expects: { lobbyCode: string, questions: array }
+ * Expects a request body with:
+ *  - lobbyCode: string
+ *  - questions: array of objects (each including at least a 'question' and 'correctAnswer' field)
  */
 router.post('/start', (req, res) => {
     const { lobbyCode, questions } = req.body;
@@ -18,10 +20,10 @@ router.post('/start', (req, res) => {
     // Create a new game session for the lobby
     sessions[lobbyCode] = {
         lobbyCode: lobbyCode,
-        questions: questions,
+        questions: questions, // each question should include a 'correctAnswer' field
         currentQuestionIndex: 0,
-        answers: {},  // Stores answers for the current question: { username: answer }
-        scores: {}    // Stores players' scores: { username: score }
+        answers: {},  // Stores players' answers: { username: { answer, isCorrect, timeTaken, score } }
+        scores: {}    // Stores players' cumulative scores: { username: totalScore }
     };
 
     res.status(201).json({
@@ -32,12 +34,16 @@ router.post('/start', (req, res) => {
 
 /**
  * Submit an answer for the current question.
- * Expects: { lobbyCode: string, username: string, answer: any }
+ * Expects a request body with:
+ *  - lobbyCode: string
+ *  - username: string
+ *  - answer: any
+ *  - timeTaken: number (seconds taken to answer)
  */
 router.post('/submit', (req, res) => {
-    const { lobbyCode, username, answer } = req.body;
-    if (!lobbyCode || !username || answer === undefined) {
-        return res.status(400).json({ error: "lobbyCode, username, and answer are required" });
+    const { lobbyCode, username, answer, timeTaken } = req.body;
+    if (!lobbyCode || !username || answer === undefined || timeTaken === undefined) {
+        return res.status(400).json({ error: "lobbyCode, username, answer, and timeTaken are required" });
     }
 
     const session = sessions[lobbyCode];
@@ -45,14 +51,93 @@ router.post('/submit', (req, res) => {
         return res.status(404).json({ error: "Game session not found" });
     }
 
-    // For now, simply store the answer.
-    // Later, add logic to check correctness, update scores, and move to the next question.
-    session.answers[username] = answer;
+    // Retrieve the current question based on the session's index
+    const currentIndex = session.currentQuestionIndex;
+    const currentQuestion = session.questions[currentIndex];
+    if (!currentQuestion) {
+        return res.status(400).json({ error: "No current question available" });
+    }
+
+    // Validate the answer (case-insensitive for strings)
+    let isCorrect = false;
+    if (typeof currentQuestion.correctAnswer === 'string') {
+        isCorrect = (currentQuestion.correctAnswer.trim().toLowerCase() === answer.trim().toLowerCase());
+    } else {
+        isCorrect = (currentQuestion.correctAnswer == answer);
+    }
+
+    // Calculate score if the answer is correct
+    let scoreIncrement = 0;
+    if (isCorrect) {
+        const baseScore = 100; // Base score for a correct answer
+        const maxTime = 30;    // Maximum time allotted (in seconds)
+        const timeBonus = Math.max(0, maxTime - timeTaken); // Bonus for faster answers
+        scoreIncrement = baseScore + timeBonus;
+
+        // Update player's cumulative score in the session
+        session.scores[username] = (session.scores[username] || 0) + scoreIncrement;
+    }
+
+    // Record the player's answer details in the session
+    session.answers[username] = {
+        answer: answer,
+        isCorrect: isCorrect,
+        timeTaken: timeTaken,
+        score: scoreIncrement
+    };
+
+    // Broadcast updated leaderboard using Socket.IO
+    const io = req.app.get('io');
+    if (io) {
+        io.to(lobbyCode).emit('leaderboardUpdate', { scores: session.scores });
+    }
 
     res.status(200).json({
         message: "Answer submitted",
+        correct: isCorrect,
+        scoreIncrement: scoreIncrement,
         session: session
     });
+});
+
+/**
+ * Advance to the next question in the game session.
+ * Expects a request body with:
+ *  - lobbyCode: string
+ */
+router.post('/nextQuestion', (req, res) => {
+    const { lobbyCode } = req.body;
+    const session = sessions[lobbyCode];
+
+    if (!session) {
+        return res.status(404).json({ error: "Game session not found" });
+    }
+
+    // Check if there is another question
+    if (session.currentQuestionIndex < session.questions.length - 1) {
+        session.currentQuestionIndex++;
+        // Clear previous answers for the new question
+        session.answers = {};
+
+        // Optionally, start a timer for the new question here
+
+        // Broadcast new question event using Socket.IO
+        const io = req.app.get('io');
+        if (io) {
+            io.to(lobbyCode).emit('newQuestion', {
+                currentQuestion: session.questions[session.currentQuestionIndex],
+                currentQuestionIndex: session.currentQuestionIndex
+            });
+        }
+
+        return res.status(200).json({
+            message: "Advanced to next question",
+            currentQuestionIndex: session.currentQuestionIndex,
+            currentQuestion: session.questions[session.currentQuestionIndex]
+        });
+    } else {
+        return res.status(200).json({ message: "Game session complete" });
+    }
 });
 
 /**
@@ -65,7 +150,6 @@ router.get('/:lobbyCode', (req, res) => {
     if (!session) {
         return res.status(404).json({ error: "Game session not found" });
     }
-
     res.json({ session: session });
 });
 
