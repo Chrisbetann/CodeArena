@@ -5,6 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const cors = require('cors'); // Added CORS middleware
 
 // Updated MongoDB Atlas connection string with Nadia's credentials
 const atlasURI = 'mongodb+srv://caUser:sfac123@codearena.fo5no.mongodb.net/CodeArena?retryWrites=true&w=majority';
@@ -20,11 +21,16 @@ mongoose.connect(atlasURI, {
 const authRoutes = require('./routes/auth');
 const lobbyRoutes = require('./routes/lobby');
 const sessionRoutes = require('./routes/session');
+const questionsRoutes = require('./routes/questions');
+
 
 const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+// Enable CORS for all routes (you can adjust the origin as needed)
+app.use(cors());
 
 // Middleware
 app.use(logger('dev'));
@@ -39,6 +45,7 @@ app.use(express.static(path.join(__dirname, '../code-arena')));
 app.use('/api/auth', authRoutes);
 app.use('/api/lobby', lobbyRoutes);
 app.use('/api/session', sessionRoutes);
+app.use('/api/questions', questionsRoutes);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
