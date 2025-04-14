@@ -17,13 +17,14 @@ router.post('/start', (req, res) => {
         return res.status(400).json({ error: "lobbyCode and an array of questions are required" });
     }
 
-    // Create a new game session for the lobby
+    // Create a new game session for the lobby, including an isPaused flag.
     sessions[lobbyCode] = {
         lobbyCode: lobbyCode,
         questions: questions, // each question should include a 'correctAnswer' field
         currentQuestionIndex: 0,
         answers: {},  // Stores players' answers: { username: { answer, isCorrect, timeTaken, score } }
-        scores: {}    // Stores players' cumulative scores: { username: totalScore }
+        scores: {},   // Stores players' cumulative scores: { username: totalScore }
+        isPaused: false // Added for pause/resume functionality
     };
 
     res.status(201).json({
@@ -49,6 +50,11 @@ router.post('/submit', (req, res) => {
     const session = sessions[lobbyCode];
     if (!session) {
         return res.status(404).json({ error: "Game session not found" });
+    }
+
+    // Check if session is paused
+    if (session.isPaused) {
+        return res.status(400).json({ error: "Game session is paused" });
     }
 
     // Retrieve the current question based on the session's index
@@ -119,8 +125,6 @@ router.post('/nextQuestion', (req, res) => {
         // Clear previous answers for the new question
         session.answers = {};
 
-        // Optionally, start a timer for the new question here
-
         // Broadcast new question event using Socket.IO
         const io = req.app.get('io');
         if (io) {
@@ -141,6 +145,46 @@ router.post('/nextQuestion', (req, res) => {
 });
 
 /**
+ * Pause the game session.
+ * Expects a request body with:
+ *  - lobbyCode: string
+ */
+router.post('/pause', (req, res) => {
+    const { lobbyCode } = req.body;
+    if (!lobbyCode) {
+        return res.status(400).json({ error: "lobbyCode is required" });
+    }
+
+    const session = sessions[lobbyCode];
+    if (!session) {
+        return res.status(404).json({ error: "Game session not found" });
+    }
+
+    session.isPaused = true;
+    res.status(200).json({ message: "Game session paused", session });
+});
+
+/**
+ * Resume the game session.
+ * Expects a request body with:
+ *  - lobbyCode: string
+ */
+router.post('/resume', (req, res) => {
+    const { lobbyCode } = req.body;
+    if (!lobbyCode) {
+        return res.status(400).json({ error: "lobbyCode is required" });
+    }
+
+    const session = sessions[lobbyCode];
+    if (!session) {
+        return res.status(404).json({ error: "Game session not found" });
+    }
+
+    session.isPaused = false;
+    res.status(200).json({ message: "Game session resumed", session });
+});
+
+/**
  * Get the status of a game session.
  * URL parameter: lobbyCode
  */
@@ -150,7 +194,7 @@ router.get('/:lobbyCode', (req, res) => {
     if (!session) {
         return res.status(404).json({ error: "Game session not found" });
     }
-    res.json({ session: session });
+    res.json({ session });
 });
 
 module.exports = router;

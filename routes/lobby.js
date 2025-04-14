@@ -17,6 +17,7 @@ function generateLobbyCode(length = 6) {
 
 // Endpoint to create a new lobby
 // POST /api/lobby/create
+
 router.post('/create', async (req, res) => {
     try {
         const hostUsername = req.body.hostUsername || "Host";
