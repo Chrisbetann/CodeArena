@@ -1,0 +1,39 @@
+[{
+  "_id": {
+    "$oid": "67e095b890ec517221de2b82"
+  },
+  "name": "Test Room",
+  "created_by": "testuser1",
+  "code": 123456,
+  "question_set": [
+    "67db5a5a84386134e0f8c68f",
+    "67e09c6d90ec517221de2b85"
+  ],
+  "players": [
+    {
+      "$oid": "67e0932290ec517221de2b81"
+    }
+  ],
+  "player_limit": 20,
+  "time_limit_sec": 3600
+},
+{
+  "_id": {
+    "$oid": "67f3528be2b79c941be29b36"
+  },
+  "name": "Test Room 2",
+  "created_by": "testuser2",
+  "code": 987654,
+  "question_set": [
+    "67e09c6d90ec517221de2b85",
+    "67e0a19b90ec517221de2b88",
+    "67e0d3f39a1f0a67a1e36219"
+  ],
+  "players": [
+    {
+      "$oid": "67f352fde2b79c941be29b37"
+    }
+  ],
+  "player_limit": 10,
+  "time_limit_sec": 1800
+}]

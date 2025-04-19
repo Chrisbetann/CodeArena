@@ -1,0 +1,28 @@
+<!-- difficulty.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Difficulty | Code Arena</title>
+  <link rel="stylesheet" href="images/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title shimmer-effect">Choose Your Challenge</h1>
+    <p class="subtitle">Select your difficulty to enter the Arena</p>
+
+    <div class="difficulty-selection">
+      <button class="difficulty-btn" onclick="selectDifficulty('easy')">Easy</button>
+      <button class="difficulty-btn" onclick="selectDifficulty('medium')">Medium</button>
+      <button class="difficulty-btn" onclick="selectDifficulty('hard')">Hard</button>
+    </div>
+  </div>
+
+  <script>
+    function selectDifficulty(level) {
+      localStorage.setItem('difficulty', level);
+      window.location.href = "game.html"; // Navigate to actual game page
+    }
+  </script>
+</body>
+</html>

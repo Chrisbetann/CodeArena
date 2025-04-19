@@ -1,0 +1,22 @@
+[{
+  "_id": {
+    "$oid": "67e1f49826e32bb2eb95546b"
+  },
+  "email": "testemail2@gmail.com",
+  "username": "testuser2",
+  "password": "apple",
+  "createdAt": {
+    "$date": "2025-04-03T12:46:30.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e1f49826e32bb2eb95546a"
+  },
+  "email": "testemail1@gmail.com",
+  "username": "testuser1",
+  "password": "pass",
+  "createdAt": {
+    "$date": "2025-03-20T23:15:30.000Z"
+  }
+}]

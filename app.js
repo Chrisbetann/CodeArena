@@ -1,61 +1,71 @@
 // app.js
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const mongoose = require('mongoose');
-const cors = require('cors'); // Added CORS middleware
+require('dotenv').config();
 
-// Updated MongoDB Atlas connection string with Nadia's credentials
-const atlasURI = 'mongodb+srv://caUser:sfac123@codearena.fo5no.mongodb.net/CodeArena?retryWrites=true&w=majority';
+const createError   = require('http-errors');
+const express       = require('express');
+const path          = require('path');
+const cookieParser  = require('cookie-parser');
+const logger        = require('morgan');
+const cors          = require('cors');
+const mongoose      = require('mongoose');
 
-mongoose.connect(atlasURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-    .then(() => console.log("Connected to MongoDB Atlas"))
-    .catch((err) => console.error("Failed to connect to MongoDB Atlas", err));
+// Connection string from .env (or fallback hard‐coded URI)
+const atlasURI = process.env.MONGO_URI
+    || 'mongodb+srv://caUser:sfac123@codearena.fo5no.mongodb.net/CodeArena?retryWrites=true&w=majority';
 
-// Import your new auth route
-const authRoutes = require('./routes/auth');
-const lobbyRoutes = require('./routes/lobby');
-const sessionRoutes = require('./routes/session');
-const questionsRoutes = require('./routes/questions');
-
+// Connect to MongoDB Atlas
+mongoose
+    .connect(atlasURI, { /* optional mongoose flags */ })
+    .then(() => console.log("✅ Connected to MongoDB Atlas"))
+    .catch(err => console.error("❌ Mongo connection error:", err));
 
 const app = express();
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// Import routes
+const authRoutes      = require('./routes/auth');
+const lobbyRoutes     = require('./routes/lobby');
+const sessionRoutes   = require('./routes/session');
+const questionsRoutes = require('./routes/questions');
+// 👇 Execute route for code execution
+const executeRoute    = require('./routes/execute');
 
-// Enable CORS for all routes (you can adjust the origin as needed)
-app.use(cors());
+// ─── MIDDLEWARE ────────────────────────────────────────────────────────────────
+app.use(cors());                       // Enable CORS for all requests
+app.use(logger('dev'));                // HTTP request logger
+app.use(express.json());               // bodyParser for JSON
+app.use(express.urlencoded({ extended: false })); // bodyParser for URL-encoded
+app.use(cookieParser());               // cookie parsing
 
-// Middleware
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+// ─── STATIC FILES ──────────────────────────────────────────────────────────────
+// Serve everything in /public at the web root:
+// - GET /game.html            → public/game.html
+// - GET /images/foo.png       → public/images/foo.png
+// - GET /code-arena/script.js → public/code-arena/script.js
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, '../code-arena')));
 
-
-// Mount the auth routes under "/api/auth"
-app.use('/api/auth', authRoutes);
-app.use('/api/lobby', lobbyRoutes);
-app.use('/api/session', sessionRoutes);
+// ─── API ROUTES ────────────────────────────────────────────────────────────────
+app.use('/api/auth',      authRoutes);
+app.use('/api/lobby',     lobbyRoutes);
+app.use('/api/session',   sessionRoutes);
 app.use('/api/questions', questionsRoutes);
+app.use('/api/execute',   executeRoute);  // mounted before 404
 
-// Catch 404 and forward to error handler
-app.use(function (req, res, next) {
+// ─── 404 HANDLER ───────────────────────────────────────────────────────────────
+// If no static file or API route matched, this will catch the 404.
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-// Error handler
-app.use(function (err, req, res, next) {
+// ─── ERROR HANDLER ─────────────────────────────────────────────────────────────
+// Renders a Pug error page (assuming you have views/error.pug).
+// If you’d rather return JSON for API calls, detect req.path.startsWith('/api')
+// and `res.json({ error: err.message })` instead.
+app.use((err, req, res, next) => {
+  // Set locals for the view
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error   = req.app.get('env') === 'development' ? err : {};
+
+  // Render the error page
   res.status(err.status || 500);
   res.render('error');
 });

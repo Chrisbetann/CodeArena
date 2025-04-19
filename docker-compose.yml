@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  judge0-db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: judge0
+      POSTGRES_USER: judge0
+      POSTGRES_PASSWORD: judge0
+    volumes:
+      - judge0-data:/var/lib/postgresql/data
+
+  judge0-redis:
+    image: redis:alpine
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+
+  judge0-api:
+    image: judge0/api:latest
+    depends_on:
+      - judge0-db
+      - judge0-redis
+    ports:
+      - "3001:3001"
+    environment:
+      # Postgres connection (use the same credentials as above)
+      DATABASE_URL: postgres://judge0:judge0@judge0-db:5432/judge0
+      # Redis connection
+      REDIS_URL: redis://judge0-redis:6379
+      # Admin token (any random secret, used in some endpoints)
+      ADMIN_TOKEN: "change-me-to-a-secure-token"
+
+volumes:
+  judge0-data:

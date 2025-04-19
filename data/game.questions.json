@@ -1,0 +1,1008 @@
+[{
+  "_id": {
+    "$oid": "67db5a5a84386134e0f8c68f"
+  },
+  "title": "Two Sum",
+  "level": "Easy",
+  "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.\n\n \n\nExample 1:\n\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].\nExample 2:\n\nInput: nums = [3,2,4], target = 6\nOutput: [1,2]\nExample 3:\n\nInput: nums = [3,3], target = 6\nOutput: [0,1]\n \n\nConstraints:\n\n2 <= nums.length <= 104\n-109 <= nums[i] <= 109\n-109 <= target <= 109\nOnly one valid answer exists.\n \n\nFollow-up: Can you come up with an algorithm that is less than O(n2) time complexity?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        ",
+      "answer": "class Solution:\n  def twoSum(self, nums: list[int], target: int) -> list[int]:\n    numToIndex = {}\n\n    for i, num in enumerate(nums):\n      if target - num in numToIndex:\n        return numToIndex[target - num], i\n      numToIndex[num] = i"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> numToIndex = new HashMap<>();\n\n    for (int i = 0; i < nums.length; ++i) {\n      if (numToIndex.containsKey(target - nums[i]))\n        return new int[] {numToIndex.get(target - nums[i]), i};\n      numToIndex.put(nums[i], i);\n    }\n\n    throw new IllegalArgumentException();\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> numToIndex;\n\n    for (int i = 0; i < nums.size(); ++i) {\n      if (const auto it = numToIndex.find(target - nums[i]);\n          it != numToIndex.cend())\n        return {it->second, i};\n      numToIndex[nums[i]] = i;\n    }\n\n    throw;\n  }\n};"
+    }
+  ],
+  "hint": "A hashmap will allow you to iterate through the array once. Can you solve this problem by using a hashmap?",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e04feb90ec517221de2b7f"
+  },
+  "title": "Valid Parenthesis",
+  "level": "Easy",
+  "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.\n\nAn input string is valid if:\n\nOpen brackets must be closed by the same type of brackets.\nOpen brackets must be closed in the correct order.\nEvery close bracket has a corresponding open bracket of the same type.\n \n\nExample 1:\n\nInput: s = \"()\"\n\nOutput: true\n\nExample 2:\n\nInput: s = \"()[]{}\"\n\nOutput: true\n\nExample 3:\n\nInput: s = \"(]\"\n\nOutput: false\n\nExample 4:\n\nInput: s = \"([])\"\n\nOutput: true\n\n \n\nConstraints:\n\n1 <= s.length <= 104\ns consists of parentheses only '()[]{}'.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def isValid(self, s: str) -> bool:\n        ",
+      "answer": "class Solution:\n  def isValid(self, s: str) -> bool:\n    stack = []\n\n    for c in s:\n      if c == '(':\n        stack.append(')')\n      elif c == '{':\n        stack.append('}')\n      elif c == '[':\n        stack.append(']')\n      elif not stack or stack.pop() != c:\n        return False\n\n    return not stack"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public boolean isValid(String s) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public boolean isValid(String s) {\n    Deque<Character> stack = new ArrayDeque<>();\n\n    for (final char c : s.toCharArray())\n      if (c == '(')\n        stack.push(')');\n      else if (c == '{')\n        stack.push('}');\n      else if (c == '[')\n        stack.push(']');\n      else if (stack.isEmpty() || stack.pop() != c)\n        return false;\n\n    return stack.isEmpty();\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    bool isValid(string s) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  bool isValid(string s) {\n    stack<char> stack;\n\n    for (const char c : s)\n      if (c == '(')\n        stack.push(')');\n      else if (c == '{')\n        stack.push('}');\n      else if (c == '[')\n        stack.push(']');\n      else if (stack.empty() || pop(stack) != c)\n        return false;\n\n    return stack.empty();\n  }\n\n private:\n  int pop(stack<char>& stack) {\n    const int c = stack.top();\n    stack.pop();\n    return c;\n  }\n};"
+    }
+  ],
+  "hint": "Consider the LIFO (Last In, First Out) property. How can you implement this method into the problem?",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0969490ec517221de2b83"
+  },
+  "title": "Merge Two Sorted Lists",
+  "level": "Easy",
+  "description": "You are given the heads of two sorted linked lists list1 and list2.\n\nMerge the two lists into one sorted list. The list should be made by splicing together the nodes of the first two lists.\n\nReturn the head of the merged linked list.\n\n \n\nExample 1:\n\nInput: list1 = [1,2,4], list2 = [1,3,4]\nOutput: [1,1,2,3,4,4]\n\nExample 2:\n\nInput: list1 = [], list2 = []\nOutput: []\n\nExample 3:\n\nInput: list1 = [], list2 = [0]\nOutput: [0]\n \n\nConstraints:\n\nThe number of nodes in both lists is in the range [0, 50].\n-100 <= Node.val <= 100\nBoth list1 and list2 are sorted in non-decreasing order.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:\n        ",
+      "answer": "class Solution:\n  def mergeTwoLists(\n      self,\n      list1: ListNode | None,\n      list2: ListNode | None,\n  ) -> ListNode | None:\n    if not list1 or not list2:\n      return list1 if list1 else list2\n    if list1.val > list2.val:\n      list1, list2 = list2, list1\n    list1.next = self.mergeTwoLists(list1.next, list2)\n    return list1"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for singly-linked list.\n * public class ListNode {\n *     int val;\n *     ListNode next;\n *     ListNode() {}\n *     ListNode(int val) { this.val = val; }\n *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n * }\n */\nclass Solution {\n    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public ListNode mergeTwoLists(ListNode list1, ListNode list2) {\n    if (list1 == null || list2 == null)\n      return list1 == null ? list2 : list1;\n    if (list1.val > list2.val) {\n      ListNode temp = list1;\n      list1 = list2;\n      list2 = temp;\n    }\n    list1.next = mergeTwoLists(list1.next, list2);\n    return list1;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     ListNode *next;\n *     ListNode() : val(0), next(nullptr) {}\n *     ListNode(int x) : val(x), next(nullptr) {}\n *     ListNode(int x, ListNode *next) : val(x), next(next) {}\n * };\n */\nclass Solution {\npublic:\n    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {\n    if (!list1 || !list2)\n      return list1 ? list1 : list2;\n    if (list1->val > list2->val)\n      swap(list1, list2);\n    list1->next = mergeTwoLists(list1->next, list2);\n    return list1;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(|list1|+|list2|)"
+},
+{
+  "_id": {
+    "$oid": "67e0995190ec517221de2b84"
+  },
+  "title": "Best Time To Buy And Sell Stock",
+  "level": "Easy",
+  "description": "You are given an array prices where prices[i] is the price of a given stock on the ith day.\n\nYou want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.\n\nReturn the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.\n\n \n\nExample 1:\n\nInput: prices = [7,1,5,3,6,4]\nOutput: 5\nExplanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.\nNote that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.\nExample 2:\n\nInput: prices = [7,6,4,3,1]\nOutput: 0\nExplanation: In this case, no transactions are done and the max profit = 0.\n \n\nConstraints:\n\n1 <= prices.length <= 105\n0 <= prices[i] <= 104",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def maxProfit(self, prices: list[int]) -> int:\n    sellOne = 0\n    holdOne = -math.inf\n\n    for price in prices:\n      sellOne = max(sellOne, holdOne + price)\n      holdOne = max(holdOne, -price)\n\n    return sellOne"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int maxProfit(int[] prices) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int maxProfit(int[] prices) {\n    int sellOne = 0;\n    int holdOne = Integer.MIN_VALUE;\n\n    for (final int price : prices) {\n      sellOne = Math.max(sellOne, holdOne + price);\n      holdOne = Math.max(holdOne, -price);\n    }\n\n    return sellOne;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int maxProfit(vector<int>& prices) {\n    int sellOne = 0;\n    int holdOne = INT_MIN;\n\n    for (const int price : prices) {\n      sellOne = max(sellOne, holdOne + price);\n      holdOne = max(holdOne, -price);\n    }\n\n    return sellOne;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e09c6d90ec517221de2b85"
+  },
+  "title": "Valid Palindrome",
+  "level": "Easy",
+  "description": "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.\n\nGiven a string s, return true if it is a palindrome, or false otherwise.\n\n \n\nExample 1:\n\nInput: s = \"A man, a plan, a canal: Panama\"\nOutput: true\nExplanation: \"amanaplanacanalpanama\" is a palindrome.\nExample 2:\n\nInput: s = \"race a car\"\nOutput: false\nExplanation: \"raceacar\" is not a palindrome.\nExample 3:\n\nInput: s = \" \"\nOutput: true\nExplanation: s is an empty string \"\" after removing non-alphanumeric characters.\nSince an empty string reads the same forward and backward, it is a palindrome.\n \n\nConstraints:\n\n1 <= s.length <= 2 * 105\ns consists only of printable ASCII characters.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def isPalindrome(self, s: str) -> bool:\n        ",
+      "answer": "class Solution:\n  def isPalindrome(self, s: str) -> bool:\n    l = 0\n    r = len(s) - 1\n\n    while l < r:\n      while l < r and not s[l].isalnum():\n        l += 1\n      while l < r and not s[r].isalnum():\n        r -= 1\n      if s[l].lower() != s[r].lower():\n        return False\n      l += 1\n      r -= 1\n\n    return True"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public boolean isPalindrome(String s) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public boolean isPalindrome(String s) {\n    int l = 0;\n    int r = s.length() - 1;\n\n    while (l < r) {\n      while (l < r && !Character.isLetterOrDigit(s.charAt(l)))\n        ++l;\n      while (l < r && !Character.isLetterOrDigit(s.charAt(r)))\n        --r;\n      if (Character.toLowerCase(s.charAt(l)) != Character.toLowerCase(s.charAt(r)))\n        return false;\n      ++l;\n      --r;\n    }\n\n    return true;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    bool isPalindrome(string s) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  bool isPalindrome(string s) {\n    int l = 0;\n    int r = s.length() - 1;\n\n    while (l < r) {\n      while (l < r && !isalnum(s[l]))\n        ++l;\n      while (l < r && !isalnum(s[r]))\n        --r;\n      if (tolower(s[l]) != tolower(s[r]))\n        return false;\n      ++l;\n      --r;\n    }\n\n    return true;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0a06d90ec517221de2b86"
+  },
+  "title": "Invert Binary Tree",
+  "level": "Easy",
+  "description": "Given the root of a binary tree, invert the tree, and return its root.\n\n \n\nExample 1:\n\nInput: root = [4,2,7,1,3,6,9]\nOutput: [4,7,2,9,6,3,1]\n\nExample 2:\n\nInput: root = [2,1,3]\nOutput: [2,3,1]\n\nExample 3:\n\nInput: root = []\nOutput: []\n \n\nConstraints:\n\nThe number of nodes in the tree is in the range [0, 100].\n-100 <= Node.val <= 100",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:\n        ",
+      "answer": "class Solution:\n  def invertTree(self, root: TreeNode | None) -> TreeNode | None:\n    if not root:\n      return None\n\n    left = root.left\n    right = root.right\n    root.left = self.invertTree(right)\n    root.right = self.invertTree(left)\n    return root"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public TreeNode invertTree(TreeNode root) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public TreeNode invertTree(TreeNode root) {\n    if (root == null)\n      return null;\n\n    TreeNode left = root.left;\n    TreeNode right = root.right;\n    root.left = invertTree(right);\n    root.right = invertTree(left);\n    return root;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    TreeNode* invertTree(TreeNode* root) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  TreeNode* invertTree(TreeNode* root) {\n    if (root == nullptr)\n      return nullptr;\n\n    TreeNode* const left = root->left;\n    TreeNode* const right = root->right;\n    root->left = invertTree(right);\n    root->right = invertTree(left);\n    return root;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(h)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0a19b90ec517221de2b88"
+  },
+  "title": "Valid Anagram",
+  "level": "Easy",
+  "description": "Given two strings s and t, return true if t is an anagram of s, and false otherwise.\n\n \n\nExample 1:\n\nInput: s = \"anagram\", t = \"nagaram\"\n\nOutput: true\n\nExample 2:\n\nInput: s = \"rat\", t = \"car\"\n\nOutput: false\n\n \n\nConstraints:\n\n1 <= s.length, t.length <= 5 * 104\ns and t consist of lowercase English letters.\n \n\nFollow up: What if the inputs contain Unicode characters? How would you adapt your solution to such a case?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def isAnagram(self, s: str, t: str) -> bool:\n        ",
+      "answer": "class Solution:\n  def isAnagram(self, s: str, t: str) -> bool:\n    if len(s) != len(t):\n      return False\n\n    count = collections.Counter(s)\n    count.subtract(collections.Counter(t))\n    return all(freq == 0 for freq in count.values())"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public boolean isAnagram(String s, String t) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public boolean isAnagram(String s, String t) {\n    if (s.length() != t.length())\n      return false;\n\n    int[] count = new int[26];\n\n    for (final char c : s.toCharArray())\n      ++count[c - 'a'];\n\n    for (final char c : t.toCharArray()) {\n      if (count[c - 'a'] == 0)\n        return false;\n      --count[c - 'a'];\n    }\n\n    return true;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    bool isAnagram(string s, string t) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  bool isAnagram(string s, string t) {\n    if (s.length() != t.length())\n      return false;\n\n    vector<int> count(26);\n\n    for (const char c : s)\n      ++count[c - 'a'];\n\n    for (const char c : t) {\n      if (count[c - 'a'] == 0)\n        return false;\n      --count[c - 'a'];\n    }\n\n    return true;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0a4ce90ec517221de2b8a"
+  },
+  "title": "Binary Search",
+  "level": "Easy",
+  "description": "Given an array of integers nums which is sorted in ascending order, and an integer target, write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.\n\nYou must write an algorithm with O(log n) runtime complexity.\n\n \n\nExample 1:\n\nInput: nums = [-1,0,3,5,9,12], target = 9\nOutput: 4\nExplanation: 9 exists in nums and its index is 4\n\nExample 2:\n\nInput: nums = [-1,0,3,5,9,12], target = 2\nOutput: -1\nExplanation: 2 does not exist in nums so return -1\n \n\nConstraints:\n\n1 <= nums.length <= 104\n-104 < nums[i], target < 104\nAll the integers in nums are unique.\nnums is sorted in ascending order.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def search(self, nums: List[int], target: int) -> int:\n        ",
+      "answer": "class Solution:\n  def search(self, nums: list[int], target: int) -> int:\n    i = bisect.bisect_left(nums, target)\n    return -1 if i == len(nums) or nums[i] != target else i"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int search(int[] nums, int target) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int search(int[] nums, int target) {\n    final int i = Arrays.binarySearch(nums, target);\n    return i < 0 ? -1 : i;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int search(vector<int>& nums, int target) {\n    const auto it = ranges::lower_bound(nums, target);\n    return (it == nums.cend() || *it != target) ? -1\n                                                : distance(nums.begin(), it);\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(log n)"
+},
+{
+  "_id": {
+    "$oid": "67e0a5a890ec517221de2b8b"
+  },
+  "title": "Linked List Cycle",
+  "level": "Easy",
+  "description": "Given head, the head of a linked list, determine if the linked list has a cycle in it.\n\nThere is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail's next pointer is connected to. Note that pos is not passed as a parameter.\n\nReturn true if there is a cycle in the linked list. Otherwise, return false.\n\n \n\nExample 1:\n\nInput: head = [3,2,0,-4], pos = 1\nOutput: true\nExplanation: There is a cycle in the linked list, where the tail connects to the 1st node (0-indexed).\n\nExample 2:\n\nInput: head = [1,2], pos = 0\nOutput: true\nExplanation: There is a cycle in the linked list, where the tail connects to the 0th node.\n\nExample 3:\n\nInput: head = [1], pos = -1\nOutput: false\nExplanation: There is no cycle in the linked list.\n \n\nConstraints:\n\nThe number of the nodes in the list is in the range [0, 104].\n-105 <= Node.val <= 105\npos is -1 or a valid index in the linked-list.\n \n\nFollow up: Can you solve it using O(1) (i.e. constant) memory?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, x):\n#         self.val = x\n#         self.next = None\n\nclass Solution:\n    def hasCycle(self, head: Optional[ListNode]) -> bool:\n        ",
+      "answer": "class Solution:\n  def hasCycle(self, head: ListNode) -> bool:\n    slow = head\n    fast = head\n\n    while fast and fast.next:\n      slow = slow.next\n      fast = fast.next.next\n      if slow == fast:\n        return True\n\n    return False"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for singly-linked list.\n * class ListNode {\n *     int val;\n *     ListNode next;\n *     ListNode(int x) {\n *         val = x;\n *         next = null;\n *     }\n * }\n */\npublic class Solution {\n    public boolean hasCycle(ListNode head) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public boolean hasCycle(ListNode head) {\n    ListNode slow = head;\n    ListNode fast = head;\n\n    while (fast != null && fast.next != null) {\n      slow = slow.next;\n      fast = fast.next.next;\n      if (slow == fast)\n        return true;\n    }\n\n    return false;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     ListNode *next;\n *     ListNode(int x) : val(x), next(NULL) {}\n * };\n */\nclass Solution {\npublic:\n    bool hasCycle(ListNode *head) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  bool hasCycle(ListNode* head) {\n    ListNode* slow = head;\n    ListNode* fast = head;\n\n    while (fast != nullptr && fast->next != nullptr) {\n      slow = slow->next;\n      fast = fast->next->next;\n      if (slow == fast)\n        return true;\n    }\n\n    return false;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0a81c90ec517221de2b8c"
+  },
+  "title": "Maximum Depth of Binary Tree",
+  "level": "Easy",
+  "description": "Given the root of a binary tree, return its maximum depth.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.\n\n \n\nExample 1:\n\nInput: root = [3,9,20,null,null,15,7]\nOutput: 3\n\nExample 2:\n\nInput: root = [1,null,2]\nOutput: 2\n \n\nConstraints:\n\nThe number of nodes in the tree is in the range [0, 104].\n-100 <= Node.val <= 100",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def maxDepth(self, root: Optional[TreeNode]) -> int:\n        ",
+      "answer": "class Solution:\n  def maxDepth(self, root: TreeNode | None) -> int:\n    if not root:\n      return 0\n    return 1 + max(self.maxDepth(root.left), self.maxDepth(root.right))"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public int maxDepth(TreeNode root) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int maxDepth(TreeNode root) {\n    if (root == null)\n      return 0;\n    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    int maxDepth(TreeNode* root) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int maxDepth(TreeNode* root) {\n    if (root == nullptr)\n      return 0;\n    return 1 + max(maxDepth(root->left), maxDepth(root->right));\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0b6379a1f0a67a1e36210"
+  },
+  "title": "Validate Binary Search Tree",
+  "level": "Medium",
+  "description": "Given the root of a binary tree, determine if it is a valid binary search tree (BST).\n\nA valid BST is defined as follows:\n\nThe left subtree of a node contains only nodes with keys less than the node's key.\nThe right subtree of a node contains only nodes with keys greater than the node's key.\nBoth the left and right subtrees must also be binary search trees.\n \n\nExample 1:\n\nInput: root = [2,1,3]\nOutput: true\n\nExample 2:\n\nInput: root = [5,1,4,null,null,3,6]\nOutput: false\nExplanation: The root node's value is 5 but its right child's value is 4.\n \n\nConstraints:\n\nThe number of nodes in the tree is in the range [1, 104].\n-231 <= Node.val <= 231 - 1",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def isValidBST(self, root: Optional[TreeNode]) -> bool:\n        ",
+      "answer": "class Solution:\n  def isValidBST(self, root: TreeNode | None) -> bool:\n    def isValidBST(root: TreeNode | None,\n                   minNode: TreeNode | None, maxNode: TreeNode | None) -> bool:\n      if not root:\n        return True\n      if minNode and root.val <= minNode.val:\n        return False\n      if maxNode and root.val >= maxNode.val:\n        return False\n\n      return (isValidBST(root.left, minNode, root) and\n              isValidBST(root.right, root, maxNode))\n\n    return isValidBST(root, None, None)"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public boolean isValidBST(TreeNode root) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public boolean isValidBST(TreeNode root) {\n    return isValidBST(root, null, null);\n  }\n\n  private boolean isValidBST(TreeNode root, TreeNode minNode, TreeNode maxNode) {\n    if (root == null)\n      return true;\n    if (minNode != null && root.val <= minNode.val)\n      return false;\n    if (maxNode != null && root.val >= maxNode.val)\n      return false;\n\n    return                                      //\n        isValidBST(root.left, minNode, root) && //\n        isValidBST(root.right, root, maxNode);\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    bool isValidBST(TreeNode* root) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  bool isValidBST(TreeNode* root) {\n    return isValidBST(root, nullptr, nullptr);\n  }\n\n private:\n  bool isValidBST(TreeNode* root, TreeNode* minNode, TreeNode* maxNode) {\n    if (root == nullptr)\n      return true;\n    if (minNode && root->val <= minNode->val)\n      return false;\n    if (maxNode && root->val >= maxNode->val)\n      return false;\n\n    return isValidBST(root->left, minNode, root) &&\n           isValidBST(root->right, root, maxNode);\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0b71f9a1f0a67a1e36211"
+  },
+  "title": "Min Stack",
+  "level": "Medium",
+  "description": "Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.\n\nImplement the MinStack class:\n\nMinStack() initializes the stack object.\nvoid push(int val) pushes the element val onto the stack.\nvoid pop() removes the element on the top of the stack.\nint top() gets the top element of the stack.\nint getMin() retrieves the minimum element in the stack.\nYou must implement a solution with O(1) time complexity for each function.\n\n \n\nExample 1:\n\nInput\n[\"MinStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"]\n[[],[-2],[0],[-3],[],[],[],[]]\n\nOutput\n[null,null,null,null,-3,null,0,-2]\n\nExplanation\nMinStack minStack = new MinStack();\nminStack.push(-2);\nminStack.push(0);\nminStack.push(-3);\nminStack.getMin(); // return -3\nminStack.pop();\nminStack.top();    // return 0\nminStack.getMin(); // return -2\n \n\nConstraints:\n\n-231 <= val <= 231 - 1\nMethods pop, top and getMin operations will always be called on non-empty stacks.\nAt most 3 * 104 calls will be made to push, pop, top, and getMin.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class MinStack:\n\n    def __init__(self):\n        \n\n    def push(self, val: int) -> None:\n        \n\n    def pop(self) -> None:\n        \n\n    def top(self) -> int:\n        \n\n    def getMin(self) -> int:\n        \n\n\n# Your MinStack object will be instantiated and called as such:\n# obj = MinStack()\n# obj.push(val)\n# obj.pop()\n# param_3 = obj.top()\n# param_4 = obj.getMin()",
+      "answer": "class MinStack:\n  def __init__(self):\n    self.stack = []\n\n  def push(self, x: int) -> None:\n    mn = x if not self.stack else min(self.stack[-1][1], x)\n    self.stack.append([x, mn])\n\n  def pop(self) -> None:\n    self.stack.pop()\n\n  def top(self) -> int:\n    return self.stack[-1][0]\n\n  def getMin(self) -> int:\n    return self.stack[-1][1]"
+    },
+    {
+      "language": "Java",
+      "frame": "class MinStack {\n\n    public MinStack() {\n        \n    }\n    \n    public void push(int val) {\n        \n    }\n    \n    public void pop() {\n        \n    }\n    \n    public int top() {\n        \n    }\n    \n    public int getMin() {\n        \n    }\n}\n\n/**\n * Your MinStack object will be instantiated and called as such:\n * MinStack obj = new MinStack();\n * obj.push(val);\n * obj.pop();\n * int param_3 = obj.top();\n * int param_4 = obj.getMin();\n */",
+      "answer": "class MinStack {\n  public void push(int x) {\n    if (stack.isEmpty())\n      stack.push(new int[] {x, x});\n    else\n      stack.push(new int[] {x, Math.min(x, stack.peek()[1])});\n  }\n\n  public void pop() {\n    stack.pop();\n  }\n\n  public int top() {\n    return stack.peek()[0];\n  }\n\n  public int getMin() {\n    return stack.peek()[1];\n  }\n\n  private Stack<int[]> stack = new Stack<>(); // {x, min}\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class MinStack {\npublic:\n    MinStack() {\n        \n    }\n    \n    void push(int val) {\n        \n    }\n    \n    void pop() {\n        \n    }\n    \n    int top() {\n        \n    }\n    \n    int getMin() {\n        \n    }\n};\n\n/**\n * Your MinStack object will be instantiated and called as such:\n * MinStack* obj = new MinStack();\n * obj->push(val);\n * obj->pop();\n * int param_3 = obj->top();\n * int param_4 = obj->getMin();\n */",
+      "answer": "class MinStack {\n public:\n  void push(int x) {\n    if (stack.empty())\n      stack.emplace(x, x);\n    else\n      stack.emplace(x, min(x, stack.top().second));\n  }\n\n  void pop() {\n    stack.pop();\n  }\n\n  int top() {\n    return stack.top().first;\n  }\n\n  int getMin() {\n    return stack.top().second;\n  }\n\n private:\n  stack<pair<int, int>> stack;  // {x, min}\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(1)"
+},
+{
+  "_id": {
+    "$oid": "67e0caea9a1f0a67a1e36218"
+  },
+  "title": "Merge Intervals",
+  "level": "Medium",
+  "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.\n\n \n\nExample 1:\n\nInput: intervals = [[1,3],[2,6],[8,10],[15,18]]\nOutput: [[1,6],[8,10],[15,18]]\nExplanation: Since intervals [1,3] and [2,6] overlap, merge them into [1,6].\nExample 2:\n\nInput: intervals = [[1,4],[4,5]]\nOutput: [[1,5]]\nExplanation: Intervals [1,4] and [4,5] are considered overlapping.\n \n\nConstraints:\n\n1 <= intervals.length <= 104\nintervals[i].length == 2\n0 <= starti <= endi <= 104",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def merge(self, intervals: List[List[int]]) -> List[List[int]]:\n        ",
+      "answer": "class Solution:\n  def merge(self, intervals: list[list[int]]) -> list[list[int]]:\n    ans = []\n\n    for interval in sorted(intervals):\n      if not ans or ans[-1][1] < interval[0]:\n        ans.append(interval)\n      else:\n        ans[-1][1] = max(ans[-1][1], interval[1])\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int[][] merge(int[][] intervals) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int[][] merge(int[][] intervals) {\n    List<int[]> ans = new ArrayList<>();\n\n    Arrays.sort(intervals, (a, b) -> Integer.compare(a[0], b[0]));\n\n    for (int[] interval : intervals)\n      if (ans.isEmpty() || ans.get(ans.size() - 1)[1] < interval[0])\n        ans.add(interval);\n      else\n        ans.get(ans.size() - 1)[1] = Math.max(ans.get(ans.size() - 1)[1], interval[1]);\n\n    return ans.toArray(int[][] ::new);\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<vector<int>> merge(vector<vector<int>>& intervals) {\n    vector<vector<int>> ans;\n\n    ranges::sort(intervals);\n\n    for (const vector<int>& interval : intervals)\n      if (ans.empty() || ans.back()[1] < interval[0])\n        ans.push_back(interval);\n      else\n        ans.back()[1] = max(ans.back()[1], interval[1]);\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(sort)"
+},
+{
+  "_id": {
+    "$oid": "67e0d3f39a1f0a67a1e36219"
+  },
+  "title": "3Sum",
+  "level": "Medium",
+  "description": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.\n\nNotice that the solution set must not contain duplicate triplets.\n\n \n\nExample 1:\n\nInput: nums = [-1,0,1,2,-1,-4]\nOutput: [[-1,-1,2],[-1,0,1]]\nExplanation: \nnums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.\nnums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.\nnums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.\nThe distinct triplets are [-1,0,1] and [-1,-1,2].\nNotice that the order of the output and the order of the triplets does not matter.\nExample 2:\n\nInput: nums = [0,1,1]\nOutput: []\nExplanation: The only possible triplet does not sum up to 0.\nExample 3:\n\nInput: nums = [0,0,0]\nOutput: [[0,0,0]]\nExplanation: The only possible triplet sums up to 0.\n \n\nConstraints:\n\n3 <= nums.length <= 3000\n-105 <= nums[i] <= 105",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def threeSum(self, nums: List[int]) -> List[List[int]]:\n        ",
+      "answer": "class Solution:\n  def threeSum(self, nums: list[int]) -> list[list[int]]:\n    if len(nums) < 3:\n      return []\n\n    ans = []\n\n    nums.sort()\n\n    for i in range(len(nums) - 2):\n      if i > 0 and nums[i] == nums[i - 1]:\n        continue\n      # Choose nums[i] as the first number in the triplet, then search the\n      # remaining numbers in [i + 1, n - 1].\n      l = i + 1\n      r = len(nums) - 1\n      while l < r:\n        summ = nums[i] + nums[l] + nums[r]\n        if summ == 0:\n          ans.append((nums[i], nums[l], nums[r]))\n          l += 1\n          r -= 1\n          while nums[l] == nums[l - 1] and l < r:\n            l += 1\n          while nums[r] == nums[r + 1] and l < r:\n            r -= 1\n        elif summ < 0:\n          l += 1\n        else:\n          r -= 1\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public List<List<Integer>> threeSum(int[] nums) {\n    if (nums.length < 3)\n      return new ArrayList<>();\n\n    List<List<Integer>> ans = new ArrayList<>();\n\n    Arrays.sort(nums);\n\n    for (int i = 0; i + 2 < nums.length; ++i) {\n      if (i > 0 && nums[i] == nums[i - 1])\n        continue;\n      // Choose nums[i] as the first number in the triplet, then search the\n      // remaining numbers in [i + 1, n - 1].\n      int l = i + 1;\n      int r = nums.length - 1;\n      while (l < r) {\n        final int sum = nums[i] + nums[l] + nums[r];\n        if (sum == 0) {\n          ans.add(Arrays.asList(nums[i], nums[l++], nums[r--]));\n          while (l < r && nums[l] == nums[l - 1])\n            ++l;\n          while (l < r && nums[r] == nums[r + 1])\n            --r;\n        } else if (sum < 0) {\n          ++l;\n        } else {\n          --r;\n        }\n      }\n    }\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<vector<int>> threeSum(vector<int>& nums) {\n    if (nums.size() < 3)\n      return {};\n\n    vector<vector<int>> ans;\n\n    ranges::sort(nums);\n\n    for (int i = 0; i + 2 < nums.size(); ++i) {\n      if (i > 0 && nums[i] == nums[i - 1])\n        continue;\n      // Choose nums[i] as the first number in the triplet, then search the\n      // remaining numbers in [i + 1, n - 1].\n      int l = i + 1;\n      int r = nums.size() - 1;\n      while (l < r) {\n        const int sum = nums[i] + nums[l] + nums[r];\n        if (sum == 0) {\n          ans.push_back({nums[i], nums[l++], nums[r--]});\n          while (l < r && nums[l] == nums[l - 1])\n            ++l;\n          while (l < r && nums[r] == nums[r + 1])\n            --r;\n        } else if (sum < 0) {\n          ++l;\n        } else {\n          --r;\n        }\n      }\n    }\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(|ans|)",
+  "ans_time_complexity": "O(n²)"
+},
+{
+  "_id": {
+    "$oid": "67e0d6279a1f0a67a1e3621b"
+  },
+  "title": "Construct Binary Tree from Preorder and Inorder Traversal",
+  "level": "Medium",
+  "description": "Given two integer arrays preorder and inorder where preorder is the preorder traversal of a binary tree and inorder is the inorder traversal of the same tree, construct and return the binary tree.\n\n \n\nExample 1:\n\nInput: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]\nOutput: [3,9,20,null,null,15,7]\n\nExample 2:\n\nInput: preorder = [-1], inorder = [-1]\nOutput: [-1]\n \n\nConstraints:\n\n1 <= preorder.length <= 3000\ninorder.length == preorder.length\n-3000 <= preorder[i], inorder[i] <= 3000\npreorder and inorder consist of unique values.\nEach value of inorder also appears in preorder.\npreorder is guaranteed to be the preorder traversal of the tree.\ninorder is guaranteed to be the inorder traversal of the tree.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for a binary tree node.\n# class TreeNode:\n#     def __init__(self, val=0, left=None, right=None):\n#         self.val = val\n#         self.left = left\n#         self.right = right\nclass Solution:\n    def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:\n        ",
+      "answer": "class Solution:\n  def constructFromPrePost(\n      self,\n      pre: list[int],\n      post: list[int],\n  ) -> TreeNode | None:\n    postToIndex = {num: i for i, num in enumerate(post)}\n\n    def build(preStart: int, preEnd: int, postStart: int, postEnd: int) -> TreeNode | None:\n      if preStart > preEnd:\n        return None\n      if preStart == preEnd:\n        return TreeNode(pre[preStart])\n\n      rootVal = pre[preStart]\n      leftRootVal = pre[preStart + 1]\n      leftRootPostIndex = postToIndex[leftRootVal]\n      leftSize = leftRootPostIndex - postStart + 1\n\n      root = TreeNode(rootVal)\n      root.left = build(preStart + 1, preStart + leftSize,\n                        postStart, leftRootPostIndex)\n      root.right = build(preStart + leftSize + 1, preEnd,\n                         leftRootPostIndex + 1, postEnd - 1)\n      return root\n\n    return build(0, len(pre) - 1, 0, len(post) - 1)"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for a binary tree node.\n * public class TreeNode {\n *     int val;\n *     TreeNode left;\n *     TreeNode right;\n *     TreeNode() {}\n *     TreeNode(int val) { this.val = val; }\n *     TreeNode(int val, TreeNode left, TreeNode right) {\n *         this.val = val;\n *         this.left = left;\n *         this.right = right;\n *     }\n * }\n */\nclass Solution {\n    public TreeNode buildTree(int[] preorder, int[] inorder) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public TreeNode constructFromPrePost(int[] pre, int[] post) {\n    Map<Integer, Integer> postToIndex = new HashMap<>();\n\n    for (int i = 0; i < post.length; ++i)\n      postToIndex.put(post[i], i);\n\n    return build(pre, 0, pre.length - 1, post, 0, post.length - 1, postToIndex);\n  }\n\n  private TreeNode build(int[] pre, int preStart, int preEnd, int[] post, int postStart,\n                         int postEnd, Map<Integer, Integer> postToIndex) {\n    if (preStart > preEnd)\n      return null;\n    if (preStart == preEnd)\n      return new TreeNode(pre[preStart]);\n\n    final int rootVal = pre[preStart];\n    final int leftRootVal = pre[preStart + 1];\n    final int leftRootPostIndex = postToIndex.get(leftRootVal);\n    final int leftSize = leftRootPostIndex - postStart + 1;\n\n    TreeNode root = new TreeNode(rootVal);\n    root.left = build(pre, preStart + 1, preStart + leftSize, post, postStart, leftRootPostIndex,\n                      postToIndex);\n    root.right = build(pre, preStart + leftSize + 1, preEnd, post, leftRootPostIndex + 1,\n                       postEnd - 1, postToIndex);\n    return root;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for a binary tree node.\n * struct TreeNode {\n *     int val;\n *     TreeNode *left;\n *     TreeNode *right;\n *     TreeNode() : val(0), left(nullptr), right(nullptr) {}\n *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}\n *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}\n * };\n */\nclass Solution {\npublic:\n    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  TreeNode* constructFromPrePost(vector<int>& pre, vector<int>& post) {\n    unordered_map<int, int> postToIndex;\n\n    for (int i = 0; i < post.size(); ++i)\n      postToIndex[post[i]] = i;\n\n    return build(pre, 0, pre.size() - 1, post, 0, post.size() - 1, postToIndex);\n  }\n\n private:\n  TreeNode* build(const vector<int>& pre, int preStart, int preEnd,\n                  const vector<int>& post, int postStart, int postEnd,\n                  const unordered_map<int, int>& postToIndex) {\n    if (preStart > preEnd)\n      return nullptr;\n    if (preStart == preEnd)\n      return new TreeNode(pre[preStart]);\n\n    const int rootVal = pre[preStart];\n    const int leftRootVal = pre[preStart + 1];\n    const int leftRootPostIndex = postToIndex.at(leftRootVal);\n    const int leftSize = leftRootPostIndex - postStart + 1;\n\n    TreeNode* root = new TreeNode(rootVal);\n    root->left = build(pre, preStart + 1, preStart + leftSize, post, postStart,\n                       leftRootPostIndex, postToIndex);\n    root->right = build(pre, preStart + leftSize + 1, preEnd, post,\n                        leftRootPostIndex + 1, postEnd - 1, postToIndex);\n    return root;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0d6c69a1f0a67a1e3621c"
+  },
+  "title": "Container With Most Water",
+  "level": "Medium",
+  "description": "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).\n\nFind two lines that together with the x-axis form a container, such that the container contains the most water.\n\nReturn the maximum amount of water a container can store.\n\nNotice that you may not slant the container.\n\n \n\nExample 1:\n\nInput: height = [1,8,6,2,5,4,8,3,7]\nOutput: 49\nExplanation: The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.\n\nExample 2:\n\nInput: height = [1,1]\nOutput: 1\n \n\nConstraints:\n\nn == height.length\n2 <= n <= 105\n0 <= height[i] <= 104",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def maxArea(self, height: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def maxArea(self, height: list[int]) -> int:\n    ans = 0\n    l = 0\n    r = len(height) - 1\n\n    while l < r:\n      minHeight = min(height[l], height[r])\n      ans = max(ans, minHeight * (r - l))\n      if height[l] < height[r]:\n        l += 1\n      else:\n        r -= 1\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int maxArea(int[] height) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int maxArea(int[] height) {\n    int ans = 0;\n    int l = 0;\n    int r = height.length - 1;\n\n    while (l < r) {\n      final int minHeight = Math.min(height[l], height[r]);\n      ans = Math.max(ans, minHeight * (r - l));\n      if (height[l] < height[r])\n        ++l;\n      else\n        --r;\n    }\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int maxArea(vector<int>& height) {\n    int ans = 0;\n    int l = 0;\n    int r = height.size() - 1;\n\n    while (l < r) {\n      const int minHeight = min(height[l], height[r]);\n      ans = max(ans, minHeight * (r - l));\n      if (height[l] < height[r])\n        ++l;\n      else\n        --r;\n    }\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0d7a79a1f0a67a1e3621d"
+  },
+  "title": "Group Anagrams",
+  "level": "Medium",
+  "description": "Given an array of strings strs, group the anagrams together. You can return the answer in any order.\n\n \n\nExample 1:\n\nInput: strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]\n\nOutput: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n\nExplanation:\n\nThere is no string in strs that can be rearranged to form \"bat\".\nThe strings \"nat\" and \"tan\" are anagrams as they can be rearranged to form each other.\nThe strings \"ate\", \"eat\", and \"tea\" are anagrams as they can be rearranged to form each other.\n\nExample 2:\n\nInput: strs = [\"\"]\n\nOutput: [[\"\"]]\n\nExample 3:\n\nInput: strs = [\"a\"]\n\nOutput: [[\"a\"]]\n\n \n\nConstraints:\n\n1 <= strs.length <= 104\n0 <= strs[i].length <= 100\nstrs[i] consists of lowercase English letters.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:\n        ",
+      "answer": "class Solution:\n  def groupAnagrams(self, strs: list[str]) -> list[list[str]]:\n    dict = collections.defaultdict(list)\n\n    for str in strs:\n      key = ''.join(sorted(str))\n      dict[key].append(str)\n\n    return dict.values()"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public List<List<String>> groupAnagrams(String[] strs) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public List<List<String>> groupAnagrams(String[] strs) {\n    Map<String, List<String>> keyToAnagrams = new HashMap<>();\n\n    for (final String str : strs) {\n      char[] chars = str.toCharArray();\n      Arrays.sort(chars);\n      String key = String.valueOf(chars);\n      keyToAnagrams.computeIfAbsent(key, k -> new ArrayList<>()).add(str);\n    }\n\n    return new ArrayList<>(keyToAnagrams.values());\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<vector<string>> groupAnagrams(vector<string>& strs) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<vector<string>> groupAnagrams(vector<string>& strs) {\n    vector<vector<string>> ans;\n    unordered_map<string, vector<string>> keyToAnagrams;\n\n    for (const string& str : strs) {\n      string key = str;\n      ranges::sort(key);\n      keyToAnagrams[key].push_back(str);\n    }\n\n    for (const auto& [_, anagrams] : keyToAnagrams)\n      ans.push_back(anagrams);\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(nk)",
+  "ans_time_complexity": "O(nk log k), where n = ∣strs∣ and k = ∣strs[i]∣"
+},
+{
+  "_id": {
+    "$oid": "67e0d8ab9a1f0a67a1e3621e"
+  },
+  "title": "Kth Largest Element in an Array",
+  "level": "Medium",
+  "description": "Given an integer array nums and an integer k, return the kth largest element in the array.\n\nNote that it is the kth largest element in the sorted order, not the kth distinct element.\n\nCan you solve it without sorting?\n\n \n\nExample 1:\n\nInput: nums = [3,2,1,5,6,4], k = 2\nOutput: 5\n\nExample 2:\n\nInput: nums = [3,2,3,1,2,4,5,5,6], k = 4\nOutput: 4\n \n\nConstraints:\n\n1 <= k <= nums.length <= 105\n-104 <= nums[i] <= 104",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def findKthLargest(self, nums: List[int], k: int) -> int:\n        ",
+      "answer": "class Solution:\n  def findKthLargest(self, nums: list[int], k: int) -> int:\n    minHeap = []\n\n    for num in nums:\n      heapq.heappush(minHeap, num)\n      if len(minHeap) > k:\n        heapq.heappop(minHeap)\n\n    return minHeap[0]"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int findKthLargest(int[] nums, int k) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int findKthLargest(int[] nums, int k) {\n    Queue<Integer> minHeap = new PriorityQueue<>();\n\n    for (final int num : nums) {\n      minHeap.offer(num);\n      while (minHeap.size() > k)\n        minHeap.poll();\n    }\n\n    return minHeap.peek();\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int findKthLargest(vector<int>& nums, int k) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int findKthLargest(vector<int>& nums, int k) {\n    priority_queue<int, vector<int>, greater<>> minHeap;\n\n    for (const int num : nums) {\n      minHeap.push(num);\n      if (minHeap.size() > k)\n        minHeap.pop();\n    }\n\n    return minHeap.top();\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n log k)",
+  "ans_time_complexity": "O(k)"
+},
+{
+  "_id": {
+    "$oid": "67e0dbae9a1f0a67a1e3621f"
+  },
+  "title": "Longest Substring Without Repeating Characters",
+  "level": "Medium",
+  "description": "Given a string s, find the length of the longest substring without duplicate characters.\n\n \n\nExample 1:\n\nInput: s = \"abcabcbb\"\nOutput: 3\nExplanation: The answer is \"abc\", with the length of 3.\nExample 2:\n\nInput: s = \"bbbbb\"\nOutput: 1\nExplanation: The answer is \"b\", with the length of 1.\nExample 3:\n\nInput: s = \"pwwkew\"\nOutput: 3\nExplanation: The answer is \"wke\", with the length of 3.\nNotice that the answer must be a substring, \"pwke\" is a subsequence and not a substring.\n \n\nConstraints:\n\n0 <= s.length <= 5 * 104\ns consists of English letters, digits, symbols and spaces.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        ",
+      "answer": "class Solution:\n  def lengthOfLongestSubstring(self, s: str) -> int:\n    ans = 0\n    count = collections.Counter()\n\n    l = 0\n    for r, c in enumerate(s):\n      count[c] += 1\n      while count[c] > 1:\n        count[s[l]] -= 1\n        l += 1\n      ans = max(ans, r - l + 1)\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int lengthOfLongestSubstring(String s) {\n    int ans = 0;\n    int[] count = new int[128];\n\n    for (int l = 0, r = 0; r < s.length(); ++r) {\n      ++count[s.charAt(r)];\n      while (count[s.charAt(r)] > 1)\n        --count[s.charAt(l++)];\n      ans = Math.max(ans, r - l + 1);\n    }\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int lengthOfLongestSubstring(string s) {\n    int ans = 0;\n    vector<int> count(128);\n\n    for (int l = 0, r = 0; r < s.length(); ++r) {\n      ++count[s[r]];\n      while (count[s[r]] > 1)\n        --count[s[l++]];\n      ans = max(ans, r - l + 1);\n    }\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e0dda29a1f0a67a1e36220"
+  },
+  "title": "Maximum Product Subarray",
+  "level": "Medium",
+  "description": "Given an integer array nums, find a subarray that has the largest product, and return the product.\n\nThe test cases are generated so that the answer will fit in a 32-bit integer.\n\n \n\nExample 1:\n\nInput: nums = [2,3,-2,4]\nOutput: 6\nExplanation: [2,3] has the largest product 6.\nExample 2:\n\nInput: nums = [-2,0,-1]\nOutput: 0\nExplanation: The result cannot be 2, because [-2,-1] is not a subarray.\n \n\nConstraints:\n\n1 <= nums.length <= 2 * 104\n-10 <= nums[i] <= 10\nThe product of any subarray of nums is guaranteed to fit in a 32-bit integer.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def maxProduct(self, nums: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def maxProduct(self, nums: list[int]) -> int:\n    ans = nums[0]\n    dpMin = nums[0]  # the minimum so far\n    dpMax = nums[0]  # the maximum so far\n\n    for i in range(1, len(nums)):\n      num = nums[i]\n      prevMin = dpMin  # dpMin[i - 1]\n      prevMax = dpMax  # dpMax[i - 1]\n      if num < 0:\n        dpMin = min(prevMax * num, num)\n        dpMax = max(prevMin * num, num)\n      else:\n        dpMin = min(prevMin * num, num)\n        dpMax = max(prevMax * num, num)\n\n      ans = max(ans, dpMax)\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int maxProduct(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int maxProduct(int[] nums) {\n    int ans = nums[0];\n    int dpMin = nums[0]; // the minimum so far\n    int dpMax = nums[0]; // the maximum so far\n\n    for (int i = 1; i < nums.length; ++i) {\n      final int num = nums[i];\n      final int prevMin = dpMin; // dpMin[i - 1]\n      final int prevMax = dpMax; // dpMax[i - 1]\n      if (num < 0) {\n        dpMin = Math.min(prevMax * num, num);\n        dpMax = Math.max(prevMin * num, num);\n      } else {\n        dpMin = Math.min(prevMin * num, num);\n        dpMax = Math.max(prevMax * num, num);\n      }\n      ans = Math.max(ans, dpMax);\n    }\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int maxProduct(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int maxProduct(vector<int>& nums) {\n    int ans = nums[0];\n    int dpMin = nums[0];  // the minimum so far\n    int dpMax = nums[0];  // the maximum so far\n\n    for (int i = 1; i < nums.size(); ++i) {\n      const int num = nums[i];\n      const int prevMin = dpMin;  // dpMin[i - 1]\n      const int prevMax = dpMax;  // dpMax[i - 1]\n      if (num < 0) {\n        dpMin = min(prevMax * num, num);\n        dpMax = max(prevMin * num, num);\n      } else {\n        dpMin = min(prevMin * num, num);\n        dpMax = max(prevMax * num, num);\n      }\n      ans = max(ans, dpMax);\n    }\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67e21e002308e73962f3ada4"
+  },
+  "title": "Merge k Sorted Lists",
+  "level": "Hard",
+  "description": "You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.\n\nMerge all the linked-lists into one sorted linked-list and return it.\n\n \n\nExample 1:\n\nInput: lists = [[1,4,5],[1,3,4],[2,6]]\nOutput: [1,1,2,3,4,4,5,6]\nExplanation: The linked-lists are:\n[\n  1->4->5,\n  1->3->4,\n  2->6\n]\nmerging them into one sorted list:\n1->1->2->3->4->4->5->6\n\nExample 2:\n\nInput: lists = []\nOutput: []\nExample 3:\n\nInput: lists = [[]]\nOutput: []\n \n\nConstraints:\n\nk == lists.length\n0 <= k <= 104\n0 <= lists[i].length <= 500\n-104 <= lists[i][j] <= 104\nlists[i] is sorted in ascending order.\nThe sum of lists[i].length will not exceed 104.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:\n        ",
+      "answer": "from queue import PriorityQueue\n\n\nclass Solution:\n  def mergeKLists(self, lists: list[ListNode]) -> ListNode:\n    dummy = ListNode(0)\n    curr = dummy\n    pq = PriorityQueue()\n\n    for i, lst in enumerate(lists):\n      if lst:\n        pq.put((lst.val, i, lst))\n\n    while not pq.empty():\n      _, i, minNode = pq.get()\n      if minNode.next:\n        pq.put((minNode.next.val, i, minNode.next))\n      curr.next = minNode\n      curr = curr.next\n\n    return dummy.next"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for singly-linked list.\n * public class ListNode {\n *     int val;\n *     ListNode next;\n *     ListNode() {}\n *     ListNode(int val) { this.val = val; }\n *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n * }\n */\nclass Solution {\n    public ListNode mergeKLists(ListNode[] lists) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public ListNode mergeKLists(ListNode[] lists) {\n    ListNode dummy = new ListNode(0);\n    ListNode curr = dummy;\n    Queue<ListNode> minHeap = new PriorityQueue<>(Comparator.comparing(a -> a.val));\n\n    for (final ListNode list : lists)\n      if (list != null)\n        minHeap.offer(list);\n\n    while (!minHeap.isEmpty()) {\n      ListNode minNode = minHeap.poll();\n      if (minNode.next != null)\n        minHeap.offer(minNode.next);\n      curr.next = minNode;\n      curr = curr.next;\n    }\n\n    return dummy.next;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     ListNode *next;\n *     ListNode() : val(0), next(nullptr) {}\n *     ListNode(int x) : val(x), next(nullptr) {}\n *     ListNode(int x, ListNode *next) : val(x), next(next) {}\n * };\n */\nclass Solution {\npublic:\n    ListNode* mergeKLists(vector<ListNode*>& lists) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  ListNode* mergeKLists(vector<ListNode*>& lists) {\n    ListNode dummy(0);\n    ListNode* curr = &dummy;\n    auto compare = [](ListNode* a, ListNode* b) { return a->val > b->val; };\n    priority_queue<ListNode*, vector<ListNode*>, decltype(compare)> minHeap(\n        compare);\n\n    for (ListNode* list : lists)\n      if (list != nullptr)\n        minHeap.push(list);\n\n    while (!minHeap.empty()) {\n      ListNode* minNode = minHeap.top();\n      minHeap.pop();\n      if (minNode->next)\n        minHeap.push(minNode->next);\n      curr->next = minNode;\n      curr = curr->next;\n    }\n\n    return dummy.next;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(k)",
+  "ans_time_complexity": "O(n log k)"
+},
+{
+  "_id": {
+    "$oid": "67e234c12308e73962f3ada5"
+  },
+  "title": "Median of Two Sorted Arrays",
+  "level": "Hard",
+  "description": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.\n\nThe overall run time complexity should be O(log (m+n)).\n\n \n\nExample 1:\n\nInput: nums1 = [1,3], nums2 = [2]\nOutput: 2.00000\nExplanation: merged array = [1,2,3] and median is 2.\n\nExample 2:\n\nInput: nums1 = [1,2], nums2 = [3,4]\nOutput: 2.50000\nExplanation: merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.\n \n\nConstraints:\n\nnums1.length == m\nnums2.length == n\n0 <= m <= 1000\n0 <= n <= 1000\n1 <= m + n <= 2000\n-106 <= nums1[i], nums2[i] <= 106",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        ",
+      "answer": "class Solution:\n  def findMedianSortedArrays(self, nums1: list[int], nums2: list[int]) -> float:\n    n1 = len(nums1)\n    n2 = len(nums2)\n    if n1 > n2:\n      return self.findMedianSortedArrays(nums2, nums1)\n\n    l = 0\n    r = n1\n\n    while l <= r:\n      partition1 = (l + r) // 2\n      partition2 = (n1 + n2 + 1) // 2 - partition1\n      maxLeft1 = -2**31 if partition1 == 0 else nums1[partition1 - 1]\n      maxLeft2 = -2**31 if partition2 == 0 else nums2[partition2 - 1]\n      minRight1 = 2**31 - 1 if partition1 == n1 else nums1[partition1]\n      minRight2 = 2**31 - 1 if partition2 == n2 else nums2[partition2]\n      if maxLeft1 <= minRight2 and maxLeft2 <= minRight1:\n        return (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) * 0.5 if (n1 + n2) % 2 == 0 else max(maxLeft1, maxLeft2)\n      elif maxLeft1 > minRight2:\n        r = partition1 - 1\n      else:\n        l = partition1 + 1"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n    final int n1 = nums1.length;\n    final int n2 = nums2.length;\n    if (n1 > n2)\n      return findMedianSortedArrays(nums2, nums1);\n\n    int l = 0;\n    int r = n1;\n\n    while (l <= r) {\n      final int partition1 = (l + r) / 2;\n      final int partition2 = (n1 + n2 + 1) / 2 - partition1;\n      final int maxLeft1 = partition1 == 0 ? Integer.MIN_VALUE : nums1[partition1 - 1];\n      final int maxLeft2 = partition2 == 0 ? Integer.MIN_VALUE : nums2[partition2 - 1];\n      final int minRight1 = partition1 == n1 ? Integer.MAX_VALUE : nums1[partition1];\n      final int minRight2 = partition2 == n2 ? Integer.MAX_VALUE : nums2[partition2];\n      if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1)\n        return (n1 + n2) % 2 == 0\n            ? (Math.max(maxLeft1, maxLeft2) + Math.min(minRight1, minRight2)) * 0.5\n            : Math.max(maxLeft1, maxLeft2);\n      else if (maxLeft1 > minRight2)\n        r = partition1 - 1;\n      else\n        l = partition1 + 1;\n    }\n\n    throw new IllegalArgumentException();\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {\n    const int n1 = nums1.size();\n    const int n2 = nums2.size();\n    if (n1 > n2)\n      return findMedianSortedArrays(nums2, nums1);\n\n    int l = 0;\n    int r = n1;\n\n    while (l <= r) {\n      const int partition1 = (l + r) / 2;\n      const int partition2 = (n1 + n2 + 1) / 2 - partition1;\n      const int maxLeft1 = partition1 == 0 ? INT_MIN : nums1[partition1 - 1];\n      const int maxLeft2 = partition2 == 0 ? INT_MIN : nums2[partition2 - 1];\n      const int minRight1 = partition1 == n1 ? INT_MAX : nums1[partition1];\n      const int minRight2 = partition2 == n2 ? INT_MAX : nums2[partition2];\n      if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1)\n        return (n1 + n2) % 2 == 0\n                   ? (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) * 0.5\n                   : max(maxLeft1, maxLeft2);\n      else if (maxLeft1 > minRight2)\n        r = partition1 - 1;\n      else\n        l = partition1 + 1;\n    }\n\n    throw;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(log min(m,n))"
+},
+{
+  "_id": {
+    "$oid": "67f57092e2b79c941be29b4e"
+  },
+  "title": "Maximum Product Subarray",
+  "level": "Medium",
+  "description": "Given an integer array nums, find a subarray that has the largest product, and return the product.\n\nThe test cases are generated so that the answer will fit in a 32-bit integer.\n\n \n\nExample 1:\n\nInput: nums = [2,3,-2,4]\nOutput: 6\nExplanation: [2,3] has the largest product 6.\n\nExample 2:\n\nInput: nums = [-2,0,-1]\nOutput: 0\nExplanation: The result cannot be 2, because [-2,-1] is not a subarray.\n \n\nConstraints:\n\n1 <= nums.length <= 2 * 104\n-10 <= nums[i] <= 10\nThe product of any subarray of nums is guaranteed to fit in a 32-bit integer.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def maxProduct(self, nums: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def maxProduct(self, nums: list[int]) -> int:\n    ans = nums[0]\n    dpMin = nums[0]  # the minimum so far\n    dpMax = nums[0]  # the maximum so far\n\n    for i in range(1, len(nums)):\n      num = nums[i]\n      prevMin = dpMin  # dpMin[i - 1]\n      prevMax = dpMax  # dpMax[i - 1]\n      if num < 0:\n        dpMin = min(prevMax * num, num)\n        dpMax = max(prevMin * num, num)\n      else:\n        dpMin = min(prevMin * num, num)\n        dpMax = max(prevMax * num, num)\n\n      ans = max(ans, dpMax)\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int maxProduct(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int maxProduct(int[] nums) {\n    int ans = nums[0];\n    int dpMin = nums[0]; // the minimum so far\n    int dpMax = nums[0]; // the maximum so far\n\n    for (int i = 1; i < nums.length; ++i) {\n      final int num = nums[i];\n      final int prevMin = dpMin; // dpMin[i - 1]\n      final int prevMax = dpMax; // dpMax[i - 1]\n      if (num < 0) {\n        dpMin = Math.min(prevMax * num, num);\n        dpMax = Math.max(prevMin * num, num);\n      } else {\n        dpMin = Math.min(prevMin * num, num);\n        dpMax = Math.max(prevMax * num, num);\n      }\n      ans = Math.max(ans, dpMax);\n    }\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int maxProduct(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int maxProduct(vector<int>& nums) {\n    int ans = nums[0];\n    int dpMin = nums[0];  // the minimum so far\n    int dpMax = nums[0];  // the maximum so far\n\n    for (int i = 1; i < nums.size(); ++i) {\n      const int num = nums[i];\n      const int prevMin = dpMin;  // dpMin[i - 1]\n      const int prevMax = dpMax;  // dpMax[i - 1]\n      if (num < 0) {\n        dpMin = min(prevMax * num, num);\n        dpMax = max(prevMin * num, num);\n      } else {\n        dpMin = min(prevMin * num, num);\n        dpMax = max(prevMax * num, num);\n      }\n      ans = max(ans, dpMax);\n    }\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f572c9e2b79c941be29b4f"
+  },
+  "title": "Subsets",
+  "level": "Medium",
+  "description": "Given an integer array nums of unique elements, return all possible subsets (the power set).\n\nThe solution set must not contain duplicate subsets. Return the solution in any order.\n\n \n\nExample 1:\n\nInput: nums = [1,2,3]\nOutput: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]\n\nExample 2:\n\nInput: nums = [0]\nOutput: [[],[0]]\n \n\nConstraints:\n\n1 <= nums.length <= 10\n-10 <= nums[i] <= 10\nAll the numbers of nums are unique.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def subsets(self, nums: List[int]) -> List[List[int]]:\n        ",
+      "answer": "class Solution:\n  def subsets(self, nums: list[int]) -> list[list[int]]:\n    ans = []\n\n    def dfs(s: int, path: list[int]) -> None:\n      ans.append(path)\n\n      for i in range(s, len(nums)):\n        dfs(i + 1, path + [nums[i]])\n\n    dfs(0, [])\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public List<List<Integer>> subsets(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public List<List<Integer>> subsets(int[] nums) {\n    List<List<Integer>> ans = new ArrayList<>();\n    dfs(nums, 0, new ArrayList<>(), ans);\n    return ans;\n  }\n\n  private void dfs(int[] nums, int s, List<Integer> path, List<List<Integer>> ans) {\n    ans.add(new ArrayList<>(path));\n\n    for (int i = s; i < nums.length; ++i) {\n      path.add(nums[i]);\n      dfs(nums, i + 1, path, ans);\n      path.remove(path.size() - 1);\n    }\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<vector<int>> subsets(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<vector<int>> subsets(vector<int>& nums) {\n    vector<vector<int>> ans;\n    dfs(nums, 0, {}, ans);\n    return ans;\n  }\n\n private:\n  void dfs(const vector<int>& nums, int s, vector<int>&& path,\n           vector<vector<int>>& ans) {\n    ans.push_back(path);\n\n    for (int i = s; i < nums.size(); ++i) {\n      path.push_back(nums[i]);\n      dfs(nums, i + 1, std::move(path), ans);\n      path.pop_back();\n    }\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n ⋅ 2^(n))",
+  "ans_time_complexity": "O(n ⋅ 2^(n))"
+},
+{
+  "_id": {
+    "$oid": "67f58421e2b79c941be29b50"
+  },
+  "title": "Basic Calculator",
+  "level": "Hard",
+  "description": "Given a string s representing a valid expression, implement a basic calculator to evaluate it, and return the result of the evaluation.\n\nNote: You are not allowed to use any built-in function which evaluates strings as mathematical expressions, such as eval().\n\n \n\nExample 1:\n\nInput: s = \"1 + 1\"\nOutput: 2\n\nExample 2:\n\nInput: s = \" 2-1 + 2 \"\nOutput: 3\n\nExample 3:\n\nInput: s = \"(1+(4+5+2)-3)+(6+8)\"\nOutput: 23\n \n\nConstraints:\n\n1 <= s.length <= 3 * 105\ns consists of digits, '+', '-', '(', ')', and ' '.\ns represents a valid expression.\n'+' is not used as a unary operation (i.e., \"+1\" and \"+(2 + 3)\" is invalid).\n'-' could be used as a unary operation (i.e., \"-1\" and \"-(2 + 3)\" is valid).\nThere will be no two consecutive operators in the input.\nEvery number and running calculation will fit in a signed 32-bit integer.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def calculate(self, s: str) -> int:\n        ",
+      "answer": "class Solution:\n  def calculate(self, s: str) -> int:\n    ans = 0\n    num = 0\n    sign = 1\n    stack = [sign]  # stack[-1]: the current environment's sign\n\n    for c in s:\n      if c.isdigit():\n        num = num * 10 + int(c)\n      elif c == '(':\n        stack.append(sign)\n      elif c == ')':\n        stack.pop()\n      elif c == '+' or c == '-':\n        ans += sign * num\n        sign = (1 if c == '+' else -1) * stack[-1]\n        num = 0\n\n    return ans + sign * num"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int calculate(String s) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int calculate(String s) {\n    int ans = 0;\n    int num = 0;\n    int sign = 1;\n    // stack.peek() := the current environment's sign\n    Deque<Integer> stack = new ArrayDeque<>();\n    stack.push(sign);\n\n    for (final char c : s.toCharArray())\n      if (Character.isDigit(c))\n        num = num * 10 + (c - '0');\n      else if (c == '(')\n        stack.push(sign);\n      else if (c == ')')\n        stack.pop();\n      else if (c == '+' || c == '-') {\n        ans += sign * num;\n        sign = (c == '+' ? 1 : -1) * stack.peek();\n        num = 0;\n      }\n\n    return ans + sign * num;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int calculate(string s) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int calculate(string s) {\n    int ans = 0;\n    int num = 0;\n    int sign = 1;\n    stack<int> stack{{sign}};  // stack.top() := the current environment's sign\n\n    for (const char c : s)\n      if (isdigit(c))\n        num = num * 10 + (c - '0');\n      else if (c == '(')\n        stack.push(sign);\n      else if (c == ')')\n        stack.pop();\n      else if (c == '+' || c == '-') {\n        ans += sign * num;\n        sign = (c == '+' ? 1 : -1) * stack.top();\n        num = 0;\n      }\n\n    return ans + sign * num;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f584c6e2b79c941be29b51"
+  },
+  "title": "Combination Sum",
+  "level": "Medium",
+  "description": "Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may return the combinations in any order.\n\nThe same number may be chosen from candidates an unlimited number of times. Two combinations are unique if the frequency of at least one of the chosen numbers is different.\n\nThe test cases are generated such that the number of unique combinations that sum up to target is less than 150 combinations for the given input.\n\n \n\nExample 1:\n\nInput: candidates = [2,3,6,7], target = 7\nOutput: [[2,2,3],[7]]\nExplanation:\n2 and 3 are candidates, and 2 + 2 + 3 = 7. Note that 2 can be used multiple times.\n7 is a candidate, and 7 = 7.\nThese are the only two combinations.\nExample 2:\n\nInput: candidates = [2,3,5], target = 8\nOutput: [[2,2,2,2],[2,3,3],[3,5]]\nExample 3:\n\nInput: candidates = [2], target = 1\nOutput: []\n \n\nConstraints:\n\n1 <= candidates.length <= 30\n2 <= candidates[i] <= 40\nAll elements of candidates are distinct.\n1 <= target <= 40",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:\n        ",
+      "answer": "class Solution:\n  def combinationSum(self, candidates: list[int],\n                     target: int) -> list[list[int]]:\n    ans = []\n\n    def dfs(s: int, target: int, path: list[int]) -> None:\n      if target < 0:\n        return\n      if target == 0:\n        ans.append(path.clone())\n        return\n\n      for i in range(s, len(candidates)):\n        path.append(candidates[i])\n        dfs(i, target - candidates[i], path)\n        path.pop()\n\n    candidates.sort()\n    dfs(0, target, [])\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public List<List<Integer>> combinationSum(int[] candidates, int target) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public List<List<Integer>> combinationSum(int[] candidates, int target) {\n    List<List<Integer>> ans = new ArrayList<>();\n    Arrays.sort(candidates);\n    dfs(candidates, 0, target, new ArrayList<>(), ans);\n    return ans;\n  }\n\n  private void dfs(int[] candidates, int s, int target, List<Integer> path,\n                   List<List<Integer>> ans) {\n    if (target < 0)\n      return;\n    if (target == 0) {\n      ans.add(new ArrayList<>(path));\n      return;\n    }\n\n    for (int i = s; i < candidates.length; ++i) {\n      path.add(candidates[i]);\n      dfs(candidates, i, target - candidates[i], path, ans);\n      path.remove(path.size() - 1);\n    }\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<vector<int>> combinationSum(vector<int>& candidates, int target) {\n    vector<vector<int>> ans;\n    ranges::sort(candidates);\n    dfs(candidates, 0, target, {}, ans);\n    return ans;\n  }\n\n private:\n  void dfs(const vector<int>& candidates, int s, int target, vector<int>&& path,\n           vector<vector<int>>& ans) {\n    if (target < 0)\n      return;\n    if (target == 0) {\n      ans.push_back(path);\n      return;\n    }\n\n    for (int i = s; i < candidates.size(); ++i) {\n      path.push_back(candidates[i]);\n      dfs(candidates, i, target - candidates[i], std::move(path), ans);\n      path.pop_back();\n    }\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(target)",
+  "ans_time_complexity": "O(∣candidates∣^(target))"
+},
+{
+  "_id": {
+    "$oid": "67f58c8ae2b79c941be29b52"
+  },
+  "title": "Game of Life",
+  "level": "Medium",
+  "description": "According to Wikipedia's article: \"The Game of Life, also known simply as Life, is a cellular automaton devised by the British mathematician John Horton Conway in 1970.\"\n\nThe board is made up of an m x n grid of cells, where each cell has an initial state: live (represented by a 1) or dead (represented by a 0). Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) using the following four rules (taken from the above Wikipedia article):\n\n1. Any live cell with fewer than two live neighbors dies as if caused by under-population.\n2. Any live cell with two or three live neighbors lives on to the next generation.\n3. Any live cell with more than three live neighbors dies, as if by over-population.\n4. Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.\n5. The next state of the board is determined by applying the above rules simultaneously to every cell in the current state of the m x n grid board. In this process, births and deaths occur simultaneously.\n\nGiven the current state of the board, update the board to reflect its next state.\n\nNote that you do not need to return anything.\n\n \n\nExample 1:\n\nInput: board = [[0,1,0],[0,0,1],[1,1,1],[0,0,0]]\nOutput: [[0,0,0],[1,0,1],[0,1,1],[0,1,0]]\n\nExample 2:\n\nInput: board = [[1,1],[1,0]]\nOutput: [[1,1],[1,1]]\n \n\nConstraints:\n\nm == board.length\nn == board[i].length\n1 <= m, n <= 25\nboard[i][j] is 0 or 1.\n \n\nFollow up:\n\nCould you solve it in-place? Remember that the board needs to be updated simultaneously: You cannot update some cells first and then use their updated values to update other cells.\nIn this question, we represent the board using a 2D array. In principle, the board is infinite, which would cause problems when the active area encroaches upon the border of the array (i.e., live cells reach the border). How would you address these problems?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def gameOfLife(self, board: List[List[int]]) -> None:\n        \"\"\"\n        Do not return anything, modify board in-place instead.\n        \"\"\"\n        ",
+      "answer": "class Solution:\n  def gameOfLife(self, board: list[list[int]]) -> None:\n    m = len(board)\n    n = len(board[0])\n\n    for i in range(m):\n      for j in range(n):\n        ones = 0\n        for x in range(max(0, i - 1), min(m, i + 2)):\n          for y in range(max(0, j - 1), min(n, j + 2)):\n            ones += board[x][y] & 1\n        # Any live cell with two or three live neighbors lives on to the next\n        # generation.\n        if board[i][j] == 1 and (ones == 3 or ones == 4):\n          board[i][j] |= 0b10\n        # Any dead cell with exactly three live neighbors becomes a live cell,\n        # as if by reproduction.\n        if board[i][j] == 0 and ones == 3:\n          board[i][j] |= 0b10\n\n    for i in range(m):\n      for j in range(n):\n        board[i][j] >>= 1"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public void gameOfLife(int[][] board) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public void gameOfLife(int[][] board) {\n    final int m = board.length;\n    final int n = board[0].length;\n\n    for (int i = 0; i < m; ++i)\n      for (int j = 0; j < n; ++j) {\n        int ones = 0;\n        for (int x = Math.max(0, i - 1); x < Math.min(m, i + 2); ++x)\n          for (int y = Math.max(0, j - 1); y < Math.min(n, j + 2); ++y)\n            ones += board[x][y] & 1;\n        // Any live cell with two or three live neighbors lives on to the next\n        // generation.\n        if (board[i][j] == 1 && (ones == 3 || ones == 4))\n          board[i][j] |= 0b10;\n        // Any dead cell with exactly three live neighbors becomes a live cell,\n        // as if by reproduction.\n        if (board[i][j] == 0 && ones == 3)\n          board[i][j] |= 0b10;\n      }\n\n    for (int i = 0; i < m; ++i)\n      for (int j = 0; j < n; ++j)\n        board[i][j] >>= 1;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    void gameOfLife(vector<vector<int>>& board) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  void gameOfLife(vector<vector<int>>& board) {\n    const int m = board.size();\n    const int n = board[0].size();\n\n    for (int i = 0; i < m; ++i)\n      for (int j = 0; j < n; ++j) {\n        int ones = 0;\n        for (int x = max(0, i - 1); x < min(m, i + 2); ++x)\n          for (int y = max(0, j - 1); y < min(n, j + 2); ++y)\n            ones += board[x][y] & 1;\n        // Any live cell with two or three live neighbors lives on to the next\n        // generation.\n        if (board[i][j] == 1 && (ones == 3 || ones == 4))\n          board[i][j] |= 0b10;\n        // Any dead cell with exactly three live neighbors becomes a live cell,\n        // as if by reproduction.\n        if (board[i][j] == 0 && ones == 3)\n          board[i][j] |= 0b10;\n      }\n\n    for (int i = 0; i < m; ++i)\n      for (int j = 0; j < n; ++j)\n        board[i][j] >>= 1;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(mn)"
+},
+{
+  "_id": {
+    "$oid": "67f5ba98e2b79c941be29b53"
+  },
+  "title": "House Robber",
+  "level": "Medium",
+  "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night.\n\nGiven an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.\n\n \n\nExample 1:\n\nInput: nums = [1,2,3,1]\nOutput: 4\nExplanation: Rob house 1 (money = 1) and then rob house 3 (money = 3).\nTotal amount you can rob = 1 + 3 = 4.\nExample 2:\n\nInput: nums = [2,7,9,3,1]\nOutput: 12\nExplanation: Rob house 1 (money = 2), rob house 3 (money = 9) and rob house 5 (money = 1).\nTotal amount you can rob = 2 + 9 + 1 = 12.\n \n\nConstraints:\n\n1 <= nums.length <= 100\n0 <= nums[i] <= 400",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def rob(self, nums: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def rob(self, nums: list[int]) -> int:\n    if not nums:\n      return 0\n    if len(nums) == 1:\n      return nums[0]\n\n    # dp[i]:= max money of robbing nums[0..i]\n    dp = [0] * len(nums)\n    dp[0] = nums[0]\n    dp[1] = max(nums[0], nums[1])\n\n    for i in range(2, len(nums)):\n      dp[i] = max(dp[i - 1], dp[i - 2] + nums[i])\n\n    return dp[-1]"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int rob(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int rob(int[] nums) {\n    final int n = nums.length;\n    if (n == 0)\n      return 0;\n    if (n == 1)\n      return nums[0];\n\n    // dp[i] := the maximum money of robbing nums[0..i]\n    int[] dp = new int[n];\n    dp[0] = nums[0];\n    dp[1] = Math.max(nums[0], nums[1]);\n\n    for (int i = 2; i < n; ++i)\n      dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);\n\n    return dp[n - 1];\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int rob(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int rob(vector<int>& nums) {\n    if (nums.empty())\n      return 0;\n    if (nums.size() == 1)\n      return nums[0];\n\n    // dp[i] := the maximum money of robbing nums[0..i]\n    vector<int> dp(nums.size());\n    dp[0] = nums[0];\n    dp[1] = max(nums[0], nums[1]);\n\n    for (int i = 2; i < nums.size(); ++i)\n      dp[i] = max(dp[i - 1], dp[i - 2] + nums[i]);\n\n    return dp.back();\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f5d383d15c7d88f9f92acd"
+  },
+  "title": "Single Number",
+  "level": "Easy",
+  "description": "Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.\n\nYou must implement a solution with a linear runtime complexity and use only constant extra space.\n\n \n\nExample 1:\n\nInput: nums = [2,2,1]\n\nOutput: 1\n\nExample 2:\n\nInput: nums = [4,1,2,1,2]\n\nOutput: 4\n\nExample 3:\n\nInput: nums = [1]\n\nOutput: 1\n\n \n\nConstraints:\n\n1 <= nums.length <= 3 * 104\n-3 * 104 <= nums[i] <= 3 * 104\nEach element in the array appears twice except for one element which appears only once.",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def singleNumber(self, nums: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def singleNumber(self, nums: list[int]) -> int:\n    return functools.reduce(operator.xor, nums, 0)"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int singleNumber(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int singleNumber(int[] nums) {\n    int ans = 0;\n\n    for (final int num : nums)\n      ans ^= num;\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int singleNumber(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int singleNumber(vector<int>& nums) {\n    int ans = 0;\n\n    for (const int num : nums)\n      ans ^= num;\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f5d462d15c7d88f9f92ace"
+  },
+  "title": "Missing Number",
+  "level": "Easy",
+  "description": "Given an array nums containing n distinct numbers in the range [0, n], return the only number in the range that is missing from the array.\n\n \n\nExample 1:\n\nInput: nums = [3,0,1]\n\nOutput: 2\n\nExplanation:\n\nn = 3 since there are 3 numbers, so all numbers are in the range [0,3]. 2 is the missing number in the range since it does not appear in nums.\n\nExample 2:\n\nInput: nums = [0,1]\n\nOutput: 2\n\nExplanation:\n\nn = 2 since there are 2 numbers, so all numbers are in the range [0,2]. 2 is the missing number in the range since it does not appear in nums.\n\nExample 3:\n\nInput: nums = [9,6,4,2,3,5,7,0,1]\n\nOutput: 8\n\nExplanation:\n\nn = 9 since there are 9 numbers, so all numbers are in the range [0,9]. 8 is the missing number in the range since it does not appear in nums.\n\n\n\nConstraints:\n\nn == nums.length\n1 <= n <= 104\n0 <= nums[i] <= n\nAll the numbers of nums are unique.\n \n\nFollow up: Could you implement a solution using only O(1) extra space complexity and O(n) runtime complexity?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def missingNumber(self, nums: List[int]) -> int:\n        ",
+      "answer": "class Solution:\n  def missingNumber(self, nums: list[int]) -> int:\n    ans = len(nums)\n\n    for i, num in enumerate(nums):\n      ans ^= i ^ num\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int missingNumber(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int missingNumber(int[] nums) {\n    int ans = nums.length;\n\n    for (int i = 0; i < nums.length; ++i)\n      ans ^= i ^ nums[i];\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int missingNumber(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int missingNumber(vector<int>& nums) {\n    int ans = nums.size();\n\n    for (int i = 0; i < nums.size(); ++i)\n      ans ^= i ^ nums[i];\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f5d774d15c7d88f9f92acf"
+  },
+  "title": "Middle of the Linked List",
+  "level": "Easy",
+  "description": "Given the head of a singly linked list, return the middle node of the linked list.\n\nIf there are two middle nodes, return the second middle node.\n\n \n\nExample 1:\n\nInput: head = [1,2,3,4,5]\nOutput: [3,4,5]\nExplanation: The middle node of the list is node 3.\n\nExample 2:\n\nInput: head = [1,2,3,4,5,6]\nOutput: [4,5,6]\nExplanation: Since the list has two middle nodes with values 3 and 4, we return the second one.\n \n\nConstraints:\n\nThe number of nodes in the list is in the range [1, 100].\n1 <= Node.val <= 100",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def middleNode(self, head: Optional[ListNode]) -> Optional[ListNode]:\n        ",
+      "answer": "class Solution:\n  def middleNode(self, head: ListNode) -> ListNode:\n    slow = head\n    fast = head\n\n    while fast and fast.next:\n      slow = slow.next\n      fast = fast.next.next\n\n    return slow"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for singly-linked list.\n * public class ListNode {\n *     int val;\n *     ListNode next;\n *     ListNode() {}\n *     ListNode(int val) { this.val = val; }\n *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n * }\n */\nclass Solution {\n    public ListNode middleNode(ListNode head) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public ListNode middleNode(ListNode head) {\n    ListNode slow = head;\n    ListNode fast = head;\n\n    while (fast != null && fast.next != null) {\n      slow = slow.next;\n      fast = fast.next.next;\n    }\n\n    return slow;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     ListNode *next;\n *     ListNode() : val(0), next(nullptr) {}\n *     ListNode(int x) : val(x), next(nullptr) {}\n *     ListNode(int x, ListNode *next) : val(x), next(next) {}\n * };\n */\nclass Solution {\npublic:\n    ListNode* middleNode(ListNode* head) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  ListNode* middleNode(ListNode* head) {\n    ListNode* slow = head;\n    ListNode* fast = head;\n\n    while (fast != nullptr && fast->next != nullptr) {\n      slow = slow->next;\n      fast = fast->next->next;\n    }\n\n    return slow;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f5d89bd15c7d88f9f92ad0"
+  },
+  "title": "Number of 1 Bits",
+  "level": "Easy",
+  "description": "Given a positive integer n, write a function that returns the number of set bits in its binary representation (also known as the Hamming weight).\n\n \n\nExample 1:\n\nInput: n = 11\n\nOutput: 3\n\nExplanation:\n\nThe input binary string 1011 has a total of three set bits.\n\nExample 2:\n\nInput: n = 128\n\nOutput: 1\n\nExplanation:\n\nThe input binary string 10000000 has a total of one set bit.\n\nExample 3:\n\nInput: n = 2147483645\n\nOutput: 30\n\nExplanation:\n\nThe input binary string 1111111111111111111111111111101 has a total of thirty set bits.\n\n \n\nConstraints:\n\n1 <= n <= 231 - 1\n \n\nFollow up: If this function is called many times, how would you optimize it?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def hammingWeight(self, n: int) -> int:\n        ",
+      "answer": "class Solution:\n  def hammingWeight(self, n: int) -> int:\n    ans = 0\n\n    for i in range(32):\n      if (n >> i) & 1:\n        ans += 1\n\n    return ans"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int hammingWeight(int n) {\n        \n    }\n}",
+      "answer": "class Solution {\n  // You need to treat n as an unsigned value\n  public int hammingWeight(int n) {\n    int ans = 0;\n\n    for (int i = 0; i < 32; ++i)\n      if (((n >> i) & 1) == 1)\n        ++ans;\n\n    return ans;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    int hammingWeight(int n) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  int hammingWeight(uint32_t n) {\n    int ans = 0;\n\n    for (int i = 0; i < 32; ++i)\n      if ((n >> i) & 1)\n        ++ans;\n\n    return ans;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(1)"
+},
+{
+  "_id": {
+    "$oid": "67f5e43ed15c7d88f9f92ad1"
+  },
+  "title": "Contains Duplicate",
+  "level": "Easy",
+  "description": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.\n\n \n\nExample 1:\n\nInput: nums = [1,2,3,1]\n\nOutput: true\n\nExplanation:\n\nThe element 1 occurs at the indices 0 and 3.\n\nExample 2:\n\nInput: nums = [1,2,3,4]\n\nOutput: false\n\nExplanation:\n\nAll elements are distinct.\n\nExample 3:\n\nInput: nums = [1,1,1,3,3,4,3,2,4,2]\n\nOutput: true\n\n \n\nConstraints:\n\n1 <= nums.length <= 105\n-109 <= nums[i] <= 109",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def containsDuplicate(self, nums: List[int]) -> bool:\n        ",
+      "answer": "class Solution:\n  def containsDuplicate(self, nums: list[int]) -> bool:\n    return len(nums) != len(set(nums))"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public boolean containsDuplicate(int[] nums) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public boolean containsDuplicate(int[] nums) {\n    Set<Integer> seen = new HashSet<>();\n\n    for (final int num : nums)\n      if (!seen.add(num))\n        return true;\n\n    return false;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    bool containsDuplicate(vector<int>& nums) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  bool containsDuplicate(vector<int>& nums) {\n    unordered_set<int> seen;\n\n    for (const int num : nums)\n      if (!seen.insert(num).second)\n        return true;\n\n    return false;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f5e5a1d15c7d88f9f92ad2"
+  },
+  "title": "Reverse Nodes in k-Group",
+  "level": "Hard",
+  "description": "Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list.\n\nk is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes, in the end, should remain as it is.\n\nYou may not alter the values in the list's nodes, only nodes themselves may be changed.\n\n \n\nExample 1:\n\nInput: head = [1,2,3,4,5], k = 2\nOutput: [2,1,4,3,5]\n\nExample 2:\n\nInput: head = [1,2,3,4,5], k = 3\nOutput: [3,2,1,4,5]\n \n\nConstraints:\n\nThe number of nodes in the list is n.\n1 <= k <= n <= 5000\n0 <= Node.val <= 1000\n \n\nFollow-up: Can you solve the problem in O(1) extra memory space?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "# Definition for singly-linked list.\n# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\nclass Solution:\n    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:\n        ",
+      "answer": "class Solution:\n  def reverseKGroup(self, head: ListNode, k: int) -> ListNode:\n    if not head or k == 1:\n      return head\n\n    def getLength(head: ListNode) -> int:\n      length = 0\n      while head:\n        length += 1\n        head = head.next\n      return length\n\n    length = getLength(head)\n    dummy = ListNode(0, head)\n    prev = dummy\n    curr = head\n\n    for _ in range(length // k):\n      for _ in range(k - 1):\n        next = curr.next\n        curr.next = next.next\n        next.next = prev.next\n        prev.next = next\n      prev = curr\n      curr = curr.next\n\n    return dummy.next"
+    },
+    {
+      "language": "Java",
+      "frame": "/**\n * Definition for singly-linked list.\n * public class ListNode {\n *     int val;\n *     ListNode next;\n *     ListNode() {}\n *     ListNode(int val) { this.val = val; }\n *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n * }\n */\nclass Solution {\n    public ListNode reverseKGroup(ListNode head, int k) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public ListNode reverseKGroup(ListNode head, int k) {\n    if (head == null || k == 1)\n      return head;\n\n    final int length = getLength(head);\n    ListNode dummy = new ListNode(0, head);\n    ListNode prev = dummy;\n    ListNode curr = head;\n\n    for (int i = 0; i < length / k; ++i) {\n      for (int j = 0; j < k - 1; ++j) {\n        ListNode next = curr.next;\n        curr.next = next.next;\n        next.next = prev.next;\n        prev.next = next;\n      }\n      prev = curr;\n      curr = curr.next;\n    }\n\n    return dummy.next;\n  }\n\n  private int getLength(ListNode head) {\n    int length = 0;\n    for (ListNode curr = head; curr != null; curr = curr.next)\n      ++length;\n    return length;\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "/**\n * Definition for singly-linked list.\n * struct ListNode {\n *     int val;\n *     ListNode *next;\n *     ListNode() : val(0), next(nullptr) {}\n *     ListNode(int x) : val(x), next(nullptr) {}\n *     ListNode(int x, ListNode *next) : val(x), next(next) {}\n * };\n */\nclass Solution {\npublic:\n    ListNode* reverseKGroup(ListNode* head, int k) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  ListNode* reverseKGroup(ListNode* head, int k) {\n    if (!head || k == 1)\n      return head;\n\n    const int length = getLength(head);\n    ListNode dummy(0, head);\n    ListNode* prev = &dummy;\n    ListNode* curr = head;\n\n    for (int i = 0; i < length / k; ++i) {\n      for (int j = 0; j < k - 1; ++j) {\n        ListNode* next = curr->next;\n        curr->next = next->next;\n        next->next = prev->next;\n        prev->next = next;\n      }\n      prev = curr;\n      curr = curr->next;\n    }\n\n    return dummy.next;\n  }\n\n private:\n  int getLength(ListNode* head) {\n    int length = 0;\n    for (ListNode* curr = head; curr; curr = curr->next)\n      ++length;\n    return length;\n  }\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(1)",
+  "ans_time_complexity": "O(n)"
+},
+{
+  "_id": {
+    "$oid": "67f5e6d1d15c7d88f9f92ad3"
+  },
+  "title": "Find Median from Data Stream",
+  "level": "Hard",
+  "description": "The median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value, and the median is the mean of the two middle values.\n\nFor example, for arr = [2,3,4], the median is 3.\nFor example, for arr = [2,3], the median is (2 + 3) / 2 = 2.5.\nImplement the MedianFinder class:\n\nMedianFinder() initializes the MedianFinder object.\nvoid addNum(int num) adds the integer num from the data stream to the data structure.\ndouble findMedian() returns the median of all elements so far. Answers within 10-5 of the actual answer will be accepted.\n \n\nExample 1:\n\nInput\n[\"MedianFinder\", \"addNum\", \"addNum\", \"findMedian\", \"addNum\", \"findMedian\"]\n[[], [1], [2], [], [3], []]\nOutput\n[null, null, null, 1.5, null, 2.0]\n\nExplanation\nMedianFinder medianFinder = new MedianFinder();\nmedianFinder.addNum(1);    // arr = [1]\nmedianFinder.addNum(2);    // arr = [1, 2]\nmedianFinder.findMedian(); // return 1.5 (i.e., (1 + 2) / 2)\nmedianFinder.addNum(3);    // arr[1, 2, 3]\nmedianFinder.findMedian(); // return 2.0\n \n\nConstraints:\n\n-105 <= num <= 105\nThere will be at least one element in the data structure before calling findMedian.\nAt most 5 * 104 calls will be made to addNum and findMedian.\n \n\nFollow up:\n\nIf all integer numbers from the stream are in the range [0, 100], how would you optimize your solution?\nIf 99% of all integer numbers from the stream are in the range [0, 100], how would you optimize your solution?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class MedianFinder:\n\n    def __init__(self):\n        \n\n    def addNum(self, num: int) -> None:\n        \n\n    def findMedian(self) -> float:\n        \n\n\n# Your MedianFinder object will be instantiated and called as such:\n# obj = MedianFinder()\n# obj.addNum(num)\n# param_2 = obj.findMedian()",
+      "answer": "class MedianFinder:\n  def __init__(self):\n    self.maxHeap = []\n    self.minHeap = []\n\n  def addNum(self, num: int) -> None:\n    if not self.maxHeap or num <= -self.maxHeap[0]:\n      heapq.heappush(self.maxHeap, -num)\n    else:\n      heapq.heappush(self.minHeap, num)\n\n    # Balance the two heaps s.t.\n    # |maxHeap| >= |minHeap| and |maxHeap| - |minHeap| <= 1.\n    if len(self.maxHeap) < len(self.minHeap):\n      heapq.heappush(self.maxHeap, -heapq.heappop(self.minHeap))\n    elif len(self.maxHeap) - len(self.minHeap) > 1:\n      heapq.heappush(self.minHeap, -heapq.heappop(self.maxHeap))\n\n  def findMedian(self) -> float:\n    if len(self.maxHeap) == len(self.minHeap):\n      return (-self.maxHeap[0] + self.minHeap[0]) / 2.0\n    return -self.maxHeap[0]"
+    },
+    {
+      "language": "Java",
+      "frame": "class MedianFinder {\n\n    public MedianFinder() {\n        \n    }\n    \n    public void addNum(int num) {\n        \n    }\n    \n    public double findMedian() {\n        \n    }\n}\n\n/**\n * Your MedianFinder object will be instantiated and called as such:\n * MedianFinder obj = new MedianFinder();\n * obj.addNum(num);\n * double param_2 = obj.findMedian();\n */",
+      "answer": "class MedianFinder {\n  public void addNum(int num) {\n    if (maxHeap.isEmpty() || num <= maxHeap.peek())\n      maxHeap.offer(num);\n    else\n      minHeap.offer(num);\n\n    // Balance the two heaps s.t.\n    // |maxHeap| >= |minHeap| and |maxHeap| - |minHeap| <= 1.\n    if (maxHeap.size() < minHeap.size())\n      maxHeap.offer(minHeap.poll());\n    else if (maxHeap.size() - minHeap.size() > 1)\n      minHeap.offer(maxHeap.poll());\n  }\n\n  public double findMedian() {\n    if (maxHeap.size() == minHeap.size())\n      return (double) (maxHeap.peek() + minHeap.peek()) / 2.0;\n    return (double) maxHeap.peek();\n  }\n\n  private Queue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());\n  private Queue<Integer> minHeap = new PriorityQueue<>();\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class MedianFinder {\npublic:\n    MedianFinder() {\n        \n    }\n    \n    void addNum(int num) {\n        \n    }\n    \n    double findMedian() {\n        \n    }\n};\n\n/**\n * Your MedianFinder object will be instantiated and called as such:\n * MedianFinder* obj = new MedianFinder();\n * obj->addNum(num);\n * double param_2 = obj->findMedian();\n */",
+      "answer": "class MedianFinder {\n public:\n  void addNum(int num) {\n    if (maxHeap.empty() || num <= maxHeap.top())\n      maxHeap.push(num);\n    else\n      minHeap.push(num);\n\n    // Balance the two heaps s.t.\n    // |maxHeap| >= |minHeap| and |maxHeap| - |minHeap| <= 1.\n    if (maxHeap.size() < minHeap.size())\n      maxHeap.push(minHeap.top()), minHeap.pop();\n    else if (maxHeap.size() - minHeap.size() > 1)\n      minHeap.push(maxHeap.top()), maxHeap.pop();\n  }\n\n  double findMedian() {\n    if (maxHeap.size() == minHeap.size())\n      return (maxHeap.top() + minHeap.top()) / 2.0;\n    return maxHeap.top();\n  }\n\n private:\n  priority_queue<int> maxHeap;\n  priority_queue<int, vector<int>, greater<>> minHeap;\n};"
+    }
+  ],
+  "hint": "",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n log n)"
+},
+{
+  "_id": {
+    "$oid": "6802ddc57f75a09df1e9d97c"
+  },
+  "title": "Two Sum 2",
+  "level": "Easy",
+  "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.\n\n \n\nExample 1:\n\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].\nExample 2:\n\nInput: nums = [3,2,4], target = 6\nOutput: [1,2]\nExample 3:\n\nInput: nums = [3,3], target = 6\nOutput: [0,1]\n \n\nConstraints:\n\n2 <= nums.length <= 104\n-109 <= nums[i] <= 109\n-109 <= target <= 109\nOnly one valid answer exists.\n \n\nFollow-up: Can you come up with an algorithm that is less than O(n2) time complexity?",
+  "content": [
+    {
+      "language": "Python",
+      "frame": "class Solution:\n    def twoSum(self, nums: List[int], target: int) -> List[int]:\n        ",
+      "answer": "class Solution:\n  def twoSum(self, nums: list[int], target: int) -> list[int]:\n    numToIndex = {}\n\n    for i, num in enumerate(nums):\n      if target - num in numToIndex:\n        return numToIndex[target - num], i\n      numToIndex[num] = i"
+    },
+    {
+      "language": "Java",
+      "frame": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        \n    }\n}",
+      "answer": "class Solution {\n  public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> numToIndex = new HashMap<>();\n\n    for (int i = 0; i < nums.length; ++i) {\n      if (numToIndex.containsKey(target - nums[i]))\n        return new int[] {numToIndex.get(target - nums[i]), i};\n      numToIndex.put(nums[i], i);\n    }\n\n    throw new IllegalArgumentException();\n  }\n}"
+    },
+    {
+      "language": "C++",
+      "frame": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        \n    }\n};",
+      "answer": "class Solution {\n public:\n  vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> numToIndex;\n\n    for (int i = 0; i < nums.size(); ++i) {\n      if (const auto it = numToIndex.find(target - nums[i]);\n          it != numToIndex.cend())\n        return {it->second, i};\n      numToIndex[nums[i]] = i;\n    }\n\n    throw;\n  }\n};"
+    }
+  ],
+  "hint": "A hashmap will allow you to iterate through the array once. Can you solve this problem by using a hashmap?",
+  "ans_space_complexity": "O(n)",
+  "ans_time_complexity": "O(n)"
+}]

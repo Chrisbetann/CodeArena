@@ -1,0 +1,135 @@
+[{
+  "_id": {
+    "$oid": "67e0932290ec517221de2b81"
+  },
+  "name": "Test Player",
+  "rank": 1,
+  "quiz_details": [
+    {
+      "questions_id": {
+        "$oid": "67db5a5a84386134e0f8c68f"
+      },
+      "question_answer": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        //idk lol\n    }\n};",
+      "question_score": {
+        "$numberLong": "10"
+      },
+      "time_end": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      },
+      "time_begin": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      }
+    },
+    {
+      "questions_id": {
+        "$oid": "67e04feb90ec517221de2b7f"
+      },
+      "question_answer": "class Solution {\n    public boolean isValid(String s) {\n        //i got nothing\n    }\n}",
+      "question_score": {
+        "$numberLong": "10"
+      },
+      "time_end": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      },
+      "time_begin": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      }
+    }
+  ],
+  "rooms_id": {
+    "$oid": "67e095b890ec517221de2b82"
+  },
+  "score_total": {
+    "$numberLong": "20"
+  }
+},
+{
+  "_id": {
+    "$oid": "67f352fde2b79c941be29b37"
+  },
+  "name": "Bob",
+  "rank": 1,
+  "quiz_details": [
+    {
+      "questions_id": {
+        "$oid": "67e09c6d90ec517221de2b85"
+      },
+      "question_answer": "class Solution:\n  def isPalindrome(self, s: str) -> bool:\n    l = 0\n    r = len(s) - 1\n\n    while l < r:\n      while l < r and not s[l].isalnum():\n        l += 1\n      while l < r and not s[r].isalnum():\n        r -= 1\n      if s[l].lower() != s[r].lower():\n        return False\n      l += 1\n      r -= 1\n\n    return True",
+      "question_score": {
+        "$numberLong": "100"
+      },
+      "time_end": {
+        "$timestamp": {
+          "t": 1743873369,
+          "i": 0
+        }
+      },
+      "time_begin": {
+        "$timestamp": {
+          "t": 1743868800,
+          "i": 0
+        }
+      }
+    },
+    {
+      "questions_id": {
+        "$oid": "67e0a19b90ec517221de2b88"
+      },
+      "question_answer": "class Solution:\n  def isAnagram(self, s: str, t: str) -> bool:\n    if len(s) != len(t):\n      return False\n\n    count = collections.Counter(s)\n    count.subtract(collections.Counter(t))\n    return all(freq == 0 for freq in count.values())",
+      "question_score": {
+        "$numberLong": "100"
+      },
+      "time_end": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      },
+      "time_begin": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      }
+    },
+    {
+      "questions_id": {
+        "$oid": "67e0d3f39a1f0a67a1e36219"
+      },
+      "question_answer": "class Solution:\n  def threeSum(self, nums: list[int]) -> list[list[int]]:\n    if len(nums) < 3:\n      return []\n\n    ans = []\n\n    nums.sort()\n\n    for i in range(len(nums) - 2):\n      if i > 0 and nums[i] == nums[i - 1]:\n        continue\n      # Choose nums[i] as the first number in the triplet, then search the\n      # remaining numbers in [i + 1, n - 1].\n      l = i + 1\n      r = len(nums) - 1\n      while l < r:\n        summ = nums[i] + nums[l] + nums[r]\n        if summ == 0:\n          ans.append((nums[i], nums[l], nums[r]))\n          l += 1\n          r -= 1\n          while nums[l] == nums[l - 1] and l < r:\n            l += 1\n          while nums[r] == nums[r + 1] and l < r:\n            r -= 1\n        elif summ < 0:\n          l += 1\n        else:\n          r -= 1\n\n    return ans",
+      "question_score": {
+        "$numberLong": "100"
+      },
+      "time_end": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      },
+      "time_begin": {
+        "$timestamp": {
+          "t": 0,
+          "i": 0
+        }
+      }
+    }
+  ],
+  "rooms_id": {
+    "$oid": "67f3528be2b79c941be29b36"
+  },
+  "score_total": {
+    "$numberLong": "300"
+  }
+}]
