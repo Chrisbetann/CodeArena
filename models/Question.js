@@ -1,20 +1,99 @@
 // models/Question.js
+
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
-const ContentSchema = new mongoose.Schema({
-    language: String,
-    frame:    String,
-    answer:   String
-}, { _id: false });
+// ─── TestCase Schema ─────────────────────────────────────────────
+const TestCaseSchema = new Schema(
+    {
+        input: {
+            type: String,
+            required: true
+        },
+        expectedOutput: {
+            type: String,
+            required: true
+        }
+    },
+    { _id: false }
+);
 
-const QuestionSchema = new mongoose.Schema({
-    title:              String,
-    level:              String,
-    description:        String,
-    content:            [ContentSchema],
-    hint:               String,
-    ans_space_complexity: String,
-    ans_time_complexity: String
-});
+// ─── Content Entry Schema ────────────────────────────────────────
+const ContentEntrySchema = new Schema(
+    {
+        language: {
+            type: String,
+            enum: ['Python', 'Java', 'C++', 'python', 'java', 'cpp'],
+            required: true
+        },
+        frame: {
+            type: String,
+            required: true
+        },
+        answer: {
+            type: String,
+            required: true
+        }
+    },
+    { _id: false }
+);
+
+// ─── Correct Answer Schema ───────────────────────────────────────
+const CorrectAnswerSchema = new Schema(
+    {
+        python: { type: String, required: true },
+        java:   { type: String, required: true },
+        cpp:    { type: String, required: true }
+    },
+    { _id: false }
+);
+
+// ─── Question Schema ─────────────────────────────────────────────
+const QuestionSchema = new Schema(
+    {
+        title: {
+            type: String,
+            required: true
+        },
+        level: {
+            type: String,
+            enum: ['Easy', 'Medium', 'Hard'],
+            required: true
+        },
+        description: {
+            type: String,
+            required: true
+        },
+        content: {
+            type: [ContentEntrySchema],
+            default: []
+        },
+        hint: {
+            type: String,
+            default: ''
+        },
+        ans_space_complexity: {
+            type: String,
+            default: ''
+        },
+        ans_time_complexity: {
+            type: String,
+            default: ''
+        },
+        correctAnswer: {
+            type: CorrectAnswerSchema,
+            required: true
+        },
+        // ─── New testCases field ────────────────────────────────────
+        testCases: {
+            type: [TestCaseSchema],
+            default: []
+        }
+    },
+    {
+        timestamps: true,     // adds createdAt & updatedAt fields
+        versionKey: '__v'     // matches your Atlas dump
+    }
+);
 
 module.exports = mongoose.model('Question', QuestionSchema);

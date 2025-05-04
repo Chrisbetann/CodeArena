@@ -1,200 +1,201 @@
 // routes/session.js
-const express = require('express');
-const router = express.Router();
 
-// In-memory store for game sessions (for demonstration purposes)
-let sessions = {};
+const express  = require('express');
+const router   = express.Router();
+const Session  = require('../models/Session');
+const Question = require('../models/Question');
+const { run }  = require('../utils/judgeRunner');
+
+// Only demoing Two‑Sum here
+const TWO_SUM_ID = '67db5a5a84386134e0f8c68f';
+
+// multipliers per difficulty
+const DIFFICULTY_MULTIPLIER = {
+    easy:   1.0,
+    medium: 1.5,
+    hard:   2.0
+};
 
 /**
- * Start a game session for a given lobby.
- * Expects a request body with:
- *  - lobbyCode: string
- *  - questions: array of objects (each including at least a 'question' and 'correctAnswer' field)
+ * Try JSON.parse if needed, else trim.
  */
-router.post('/start', (req, res) => {
+function normalize(s) {
+    const t = s.trim();
+    if (/^".*"$/.test(t)) {
+        try { return JSON.parse(t); } catch {}
+    }
+    return t;
+}
+
+/**
+ * Deep‑compare arrays if JSON, else string.
+ */
+function compareOutputs(actual, expected) {
+    const aNorm = normalize(actual),
+        eNorm = normalize(expected);
+    try {
+        const aJ = JSON.parse(aNorm),
+            eJ = JSON.parse(eNorm);
+        if (Array.isArray(aJ) && Array.isArray(eJ)) {
+            return aJ.length === eJ.length && aJ.every((v,i)=>v===eJ[i]);
+        }
+    } catch {}
+    return String(aNorm) === String(eNorm);
+}
+
+// POST /api/session/start
+router.post('/start', async (req, res) => {
     const { lobbyCode, questions } = req.body;
-    if (!lobbyCode || !questions || !Array.isArray(questions)) {
-        return res.status(400).json({ error: "lobbyCode and an array of questions are required" });
+    if (!lobbyCode||!Array.isArray(questions)) {
+        return res.status(400).json({ error:'lobbyCode & questions required' });
     }
-
-    // Create a new game session for the lobby, including an isPaused flag.
-    sessions[lobbyCode] = {
-        lobbyCode: lobbyCode,
-        questions: questions, // each question should include a 'correctAnswer' field
-        currentQuestionIndex: 0,
-        answers: {},  // Stores players' answers: { username: { answer, isCorrect, timeTaken, score } }
-        scores: {},   // Stores players' cumulative scores: { username: totalScore }
-        isPaused: false // Added for pause/resume functionality
-    };
-
-    res.status(201).json({
-        message: "Game session started",
-        session: sessions[lobbyCode]
-    });
+    try {
+        const qIDs = questions.map(q=>typeof q==='string'?q:q.id);
+        const session = await Session.findOneAndUpdate(
+            { lobbyCode },
+            { lobbyCode, questions: qIDs, isPaused: false },
+            { upsert:true, new:true, setDefaultsOnInsert:true }
+        );
+        res.status(201).json({ session });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error:'Could not start session' });
+    }
 });
 
-/**
- * Submit an answer for the current question.
- * Expects a request body with:
- *  - lobbyCode: string
- *  - username: string
- *  - answer: any
- *  - timeTaken: number (seconds taken to answer)
- */
-router.post('/submit', (req, res) => {
-    const { lobbyCode, username, answer, timeTaken } = req.body;
-    if (!lobbyCode || !username || answer === undefined || timeTaken === undefined) {
-        return res.status(400).json({ error: "lobbyCode, username, answer, and timeTaken are required" });
+// POST /api/session/submit
+router.post('/submit', async (req, res) => {
+    const { lobbyCode, username, questionId, code, timeTaken, language, difficulty } = req.body;
+    if (!lobbyCode||!username||!questionId||typeof code!=='string'||timeTaken==null||!language) {
+        return res.status(400).json({ error:'All fields required' });
     }
 
-    const session = sessions[lobbyCode];
-    if (!session) {
-        return res.status(404).json({ error: "Game session not found" });
-    }
+    try {
+        const session = await Session.findOne({ lobbyCode });
+        if (!session) return res.status(404).json({ error:'No active session' });
+        if (session.isPaused) return res.status(400).json({ error:'Session paused' });
 
-    // Check if session is paused
-    if (session.isPaused) {
-        return res.status(400).json({ error: "Game session is paused" });
-    }
+        const question = await Question.findById(questionId).lean();
+        if (!question) return res.status(400).json({ error:'Invalid questionId' });
 
-    // Retrieve the current question based on the session's index
-    const currentIndex = session.currentQuestionIndex;
-    const currentQuestion = session.questions[currentIndex];
-    if (!currentQuestion) {
-        return res.status(400).json({ error: "No current question available" });
-    }
+        // 2) run tests through Two‑Sum harness
+        let allPassed = true;
+        for (const tc of question.testCases||[]) {
+            let wrapped;
+            // only Two‑Sum demo
+            if (language==='python') {
+                wrapped = `
+${code}
 
-    // Validate the answer (case-insensitive for strings)
-    let isCorrect = false;
-    if (typeof currentQuestion.correctAnswer === 'string') {
-        isCorrect = (currentQuestion.correctAnswer.trim().toLowerCase() === answer.trim().toLowerCase());
-    } else {
-        isCorrect = (currentQuestion.correctAnswer == answer);
-    }
+import sys,json
+if 'two_sum' in globals() and 'twoSum' not in globals():
+    twoSum = two_sum
+_tokens = sys.stdin.read().strip().split()
+nums   = list(map(int,_tokens[:-1]))
+target = int(_tokens[-1])
+res    = twoSum(nums,target)
+print(json.dumps(res,separators=(',',':')))
+`;
+            }
+            else if (language==='cpp') {
+                wrapped = `
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+using namespace std;
 
-    // Calculate score if the answer is correct
-    let scoreIncrement = 0;
-    if (isCorrect) {
-        const baseScore = 100; // Base score for a correct answer
-        const maxTime = 30;    // Maximum time allotted (in seconds)
-        const timeBonus = Math.max(0, maxTime - timeTaken); // Bonus for faster answers
-        scoreIncrement = baseScore + timeBonus;
+${code}
 
-        // Update player's cumulative score in the session
-        session.scores[username] = (session.scores[username] || 0) + scoreIncrement;
-    }
+int main(){
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  vector<int> v; int x;
+  while(cin>>x) v.push_back(x);
+  int target=v.back(); v.pop_back();
+  auto ans=twoSum(v,target);
+  cout<<"["<<ans[0]<<","<<ans[1]<<"]";
+  return 0;
+}
+`;
+            }
+            else if (language==='java') {
+                wrapped = `
+import java.util.*;
+${code}
+public class Main {
+  public static void main(String[] args) {
+    Scanner sc=new Scanner(System.in);
+    List<Integer> nums=new ArrayList<>();
+    while(sc.hasNextInt()) nums.add(sc.nextInt());
+    int target=nums.remove(nums.size()-1);
+    int[] ans=new Solution().twoSum(
+      nums.stream().mapToInt(i->i).toArray(),target
+    );
+    System.out.print("["+ans[0]+","+ans[1]+"]");
+  }
+}
+`;
+            } else {
+                return res.status(400).json({ error:`Unsupported language ${language}` });
+            }
 
-    // Record the player's answer details in the session
-    session.answers[username] = {
-        answer: answer,
-        isCorrect: isCorrect,
-        timeTaken: timeTaken,
-        score: scoreIncrement
-    };
-
-    // Broadcast updated leaderboard using Socket.IO
-    const io = req.app.get('io');
-    if (io) {
-        io.to(lobbyCode).emit('leaderboardUpdate', { scores: session.scores });
-    }
-
-    res.status(200).json({
-        message: "Answer submitted",
-        correct: isCorrect,
-        scoreIncrement: scoreIncrement,
-        session: session
-    });
-});
-
-/**
- * Advance to the next question in the game session.
- * Expects a request body with:
- *  - lobbyCode: string
- */
-router.post('/nextQuestion', (req, res) => {
-    const { lobbyCode } = req.body;
-    const session = sessions[lobbyCode];
-
-    if (!session) {
-        return res.status(404).json({ error: "Game session not found" });
-    }
-
-    // Check if there is another question
-    if (session.currentQuestionIndex < session.questions.length - 1) {
-        session.currentQuestionIndex++;
-        // Clear previous answers for the new question
-        session.answers = {};
-
-        // Broadcast new question event using Socket.IO
-        const io = req.app.get('io');
-        if (io) {
-            io.to(lobbyCode).emit('newQuestion', {
-                currentQuestion: session.questions[session.currentQuestionIndex],
-                currentQuestionIndex: session.currentQuestionIndex
-            });
+            const result = await run({ language, source: wrapped, stdin: tc.input });
+            if (!result.success || !compareOutputs(result.output,tc.expectedOutput)) {
+                allPassed = false;
+                break;
+            }
         }
 
-        return res.status(200).json({
-            message: "Advanced to next question",
-            currentQuestionIndex: session.currentQuestionIndex,
-            currentQuestion: session.questions[session.currentQuestionIndex]
+        // 3) score & record
+        const isCorrect  = allPassed;
+        const BASE_TIME  = 30;
+        const BASE_SCORE = 100;
+        const bonus      = Math.max(0, BASE_TIME - Number(timeTaken));
+        const rawScore   = isCorrect ? (BASE_SCORE + bonus) : 0;
+
+        // apply multiplier
+        const mul          = DIFFICULTY_MULTIPLIER[difficulty] || 1.0;
+        const scoreIncrement = Math.round(rawScore * mul);
+
+        if (isCorrect) {
+            const prev = session.scores.get(username) || 0;
+            session.scores.set(username, prev + scoreIncrement);
+        }
+
+        session.submissions.push({
+            username,
+            questionId,
+            code,
+            output:       isCorrect ? '✅ Passed all tests' : '❌ Failed tests',
+            language,
+            timeTaken,
+            scoreIncrement,
+            isCorrect
         });
-    } else {
-        return res.status(200).json({ message: "Game session complete" });
+        await session.save();
+
+        return res.json({
+            correct:      isCorrect,
+            scoreIncrement,
+            totalScore:   session.scores.get(username) || 0
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error:'Submission failed' });
     }
 });
 
-/**
- * Pause the game session.
- * Expects a request body with:
- *  - lobbyCode: string
- */
-router.post('/pause', (req, res) => {
-    const { lobbyCode } = req.body;
-    if (!lobbyCode) {
-        return res.status(400).json({ error: "lobbyCode is required" });
+// GET /api/session/:lobbyCode
+router.get('/:lobbyCode', async (req, res) => {
+    try {
+        const session = await Session.findOne({ lobbyCode: req.params.lobbyCode });
+        if (!session) return res.status(404).json({ error:'Session not found' });
+        res.json({ session });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error:'Could not fetch session' });
     }
-
-    const session = sessions[lobbyCode];
-    if (!session) {
-        return res.status(404).json({ error: "Game session not found" });
-    }
-
-    session.isPaused = true;
-    res.status(200).json({ message: "Game session paused", session });
-});
-
-/**
- * Resume the game session.
- * Expects a request body with:
- *  - lobbyCode: string
- */
-router.post('/resume', (req, res) => {
-    const { lobbyCode } = req.body;
-    if (!lobbyCode) {
-        return res.status(400).json({ error: "lobbyCode is required" });
-    }
-
-    const session = sessions[lobbyCode];
-    if (!session) {
-        return res.status(404).json({ error: "Game session not found" });
-    }
-
-    session.isPaused = false;
-    res.status(200).json({ message: "Game session resumed", session });
-});
-
-/**
- * Get the status of a game session.
- * URL parameter: lobbyCode
- */
-router.get('/:lobbyCode', (req, res) => {
-    const lobbyCode = req.params.lobbyCode;
-    const session = sessions[lobbyCode];
-    if (!session) {
-        return res.status(404).json({ error: "Game session not found" });
-    }
-    res.json({ session });
 });
 
 module.exports = router;

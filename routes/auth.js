@@ -1,61 +1,52 @@
 // routes/auth.js
-const express = require('express');
-const router = express.Router();
-const jwt = require('jsonwebtoken');
 
-// In a production environment, you would import your User model here
-// const User = require('../models/User');
+const express  = require('express');
+const jwt      = require('jsonwebtoken');
+const User     = require('../models/User');
+const router   = express.Router();
 
-// Secret key for JWT signing. For production, store this in an environment variable.
-const SECRET_KEY = 'YOUR_SECRET_KEY_HERE';
+const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_THIS_SECRET';
 
-// Registration Endpoint
+// POST /api/auth/register
+// Body: { username, password }
 router.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'username & password required' });
+    }
     try {
-        const { email, username, password } = req.body;
-        const userId = 'user_id_here'; // Replace with newUser._id when using a DB
-
-        // Generate a JWT token for auto-login
-        const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
-
-        // Respond with the registration success message, user info, and token
-        return res.status(201).json({
-            message: `Registration successful! Welcome, ${username}!`,
-            user: {
-                id: userId,
-                username: username
-            },
-            token: token
-        });
-    } catch (error) {
-        return res.status(500).json({ error: 'Something went wrong' });
+        const user = new User({ username });
+        await user.setPassword(password);
+        await user.save();
+        return res.status(201).json({ message: 'User created' });
+    } catch (err) {
+        console.error('Register error:', err);
+        return res.status(400).json({ error: 'Username already taken' });
     }
 });
 
-// Login Endpoint
+// POST /api/auth/login
+// Body: { username, password }
 router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'username & password required' });
+    }
     try {
-        const { email, password } = req.body;
-
-        // For demonstration, assume the user is found with these details:
-        const userId = 'user_id_here';       // Replace with user._id
-        const username = 'host_username';     // Replace with user.username
-        const userEmail = 'host_email@example.com'; // Replace with user.email
-
-        // Generate a JWT token
-        const token = jwt.sign({ userId: userId }, SECRET_KEY, { expiresIn: '1h' });
-
-        // Respond with the login success structure
-        return res.json({
-            token: token,
-            user: {
-                id: userId,
-                username: username,
-                email: userEmail
-            }
-        });
-    } catch (error) {
-        return res.status(500).json({ error: 'Error logging in' });
+        const user = await User.findOne({ username });
+        if (!user || !(await user.validatePassword(password))) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+        // Create a JWT for future authenticated requests
+        const token = jwt.sign(
+            { sub: user._id.toString(), username: user.username },
+            JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+        return res.json({ token, username: user.username });
+    } catch (err) {
+        console.error('Login error:', err);
+        return res.status(500).json({ error: 'Login failed' });
     }
 });
 

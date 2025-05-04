@@ -1,33 +1,36 @@
-version: "3.8"
-
 services:
-  judge0-db:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_DB: judge0
-      POSTGRES_USER: judge0
-      POSTGRES_PASSWORD: judge0
-    volumes:
-      - judge0-data:/var/lib/postgresql/data
-
-  judge0-redis:
+  redis:
     image: redis:alpine
-    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
-
-  judge0-api:
-    image: judge0/api:latest
-    depends_on:
-      - judge0-db
-      - judge0-redis
+    command: ["redis-server","--save","60","1","--loglevel","warning"]
     ports:
-      - "3001:3001"
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15-alpine
     environment:
-      # Postgres connection (use the same credentials as above)
-      DATABASE_URL: postgres://judge0:judge0@judge0-db:5432/judge0
-      # Redis connection
-      REDIS_URL: redis://judge0-redis:6379
-      # Admin token (any random secret, used in some endpoints)
-      ADMIN_TOKEN: "change-me-to-a-secure-token"
+      POSTGRES_DB:       judge0
+      POSTGRES_USER:     judge0
+      POSTGRES_PASSWORD: judge0
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  judge0:
+    image: judge0/api:latest
+    platform: linux/amd64
+    depends_on:
+      - redis
+      - postgres
+    ports:
+      - "2358:3000"             # host 2358 → container 3000
+    environment:
+      DATABASE_URL: postgres://judge0:judge0@postgres:5432/judge0
+      REDIS_URL:    redis://redis:6379
+      RACK_ENV:     development
+      # we no longer need PORT/WEB_CONCURRENCY here
+    # ← override the default entrypoint/CMD and just run `rails server`
+    command: ["sh", "-c", "bundle exec rails server -b 0.0.0.0 -p 3000"]
 
 volumes:
-  judge0-data:
+  pgdata:

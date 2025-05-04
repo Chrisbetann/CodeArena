@@ -1,100 +1,56 @@
+// scripts/seed.js
 
-
-// models
+require('dotenv').config();
+const mongoose = require('mongoose');
 const Question = require('../models/Question');
-const User     = require('../models/User');
-const Room     = require('../models/Room');
-const Player   = require('../models/Player');
-
-// raw JSON
-const rawQuestions = require('../data/game.questions.json');
-const rawUsers     = require('../data/game.users.json');
-const rawRooms     = require('../data/game.rooms.json');
-const rawPlayers   = require('../data/game.players.json');
-
-/**
- * Recursively walk any JS value and normalize:
- *  - { $oid: "..." }       → ObjectId
- *  - { $date: "..." }      → Date
- *  - { $timestamp: {t,i} } → Date(t*1000)
- *  - { $numberLong: "..."} → Number
- */
-function normalizeValue(val) {
-    if (Array.isArray(val)) {
-        return val.map(normalizeValue);
-    }
-    if (val && typeof val === 'object') {
-        // ObjectId
-        if (typeof val.$oid === 'string') {
-            return new Types.ObjectId(val.$oid);
-        }
-        // Date from $date
-        if (typeof val.$date === 'string') {
-            return new Date(val.$date);
-        }
-        // Timestamp
-        if (val.$timestamp && typeof val.$timestamp.t === 'number') {
-            return new Date(val.$timestamp.t * 1000);
-        }
-        // numberLong
-        if (typeof val.$numberLong === 'string') {
-            return Number(val.$numberLong);
-        }
-        // otherwise recurse
-        const out = {};
-        for (const [k,v] of Object.entries(val)) {
-            out[k] = normalizeValue(v);
-        }
-        return out;
-    }
-    return val;
-}
-
-/** Strip out any Extended JSON wrappers throughout each document */
-function normalizeArray(arr) {
-    return arr.map(doc => {
-        const clone = normalizeValue(doc);
-        // if they provided a top‑level _id, keep it; otherwise let Mongo assign one.
-        if (!clone._id) delete clone._id;
-        return clone;
-    });
-}
 
 async function seed() {
     try {
-        // 1) connect
         const uri = process.env.MONGO_URI ||
             'mongodb+srv://caUser:sfac123@codearena.fo5no.mongodb.net/CodeArena?retryWrites=true&w=majority';
         await mongoose.connect(uri);
         console.log('✅ Connected to MongoDB');
 
-        // 2) clear
-        await Promise.all([
-            Question.deleteMany({}),
-            User.deleteMany({}),
-            Room.deleteMany({}),
-            Player.deleteMany({}),
-        ]);
-        console.log('🗑️  Cleared existing collections');
+        const cases = [
+            // ── Two Sum ───────────────────────────────────────────────
+            {
+                id: '67db5a5a84386134e0f8c68f',
+                testCases: [
+                    { input: '2 7 11 15 9\n', expectedOutput: '[0,1]\n' },
+                    { input: '3 2 4 6\n',       expectedOutput: '[1,2]\n' }
+                ]
+            },
+            // ── Valid Parenthesis ────────────────────────────────────
+            {
+                id: '67e04feb90ec517221de2b7f',
+                testCases: [
+                    { input: '()\n',      expectedOutput: 'true\n' },
+                    { input: '()[]{}\n',  expectedOutput: 'true\n' },
+                    { input: '(]\n',      expectedOutput: 'false\n' },
+                    { input: '{[]}\n',    expectedOutput: 'true\n' }
+                ]
+            },
+            // ── Merge Two Sorted Lists ──────────────────────────────
+            {
+                id: '67e0969490ec517221de2b83',
+                testCases: [
+                    { input: '1 3 5 2 4 6\n', expectedOutput: '[1,2,3,4,5,6]\n' },
+                    { input: '1 2 4 1 3 4\n', expectedOutput: '[1,1,2,3,4,4]\n' }
+                ]
+            }
+        ];
 
-        // 3) normalize & insert
-        const questions = normalizeArray(rawQuestions);
-        await Question.insertMany(questions);
-        console.log(`📥 Inserted ${questions.length} questions`);
+        for (const { id, testCases } of cases) {
+            const res = await Question.updateOne(
+                { _id: id },            // let Mongoose cast the string to ObjectId
+                { $set: { testCases } }
+            );
+            console.log(
+                `Question ${id} → matched ${res.matchedCount}, modified ${res.modifiedCount}`
+            );
+        }
 
-        const users = normalizeArray(rawUsers);
-        await User.insertMany(users);
-        console.log(`📥 Inserted ${users.length} users`);
-
-        const rooms = normalizeArray(rawRooms);
-        await Room.insertMany(rooms);
-        console.log(`📥 Inserted ${rooms.length} rooms`);
-
-        const players = normalizeArray(rawPlayers);
-        await Player.insertMany(players);
-        console.log(`📥 Inserted ${players.length} players`);
-
-        console.log('🎉 Seeding complete!');
+        console.log('🎉 All test cases seeded');
     } catch (err) {
         console.error('❌ Seeding error:', err);
     } finally {

@@ -1,22 +1,76 @@
 // models/Player.js
+const mongoose = require('mongoose')
+const { Schema } = mongoose
 
-const mongoose = require('mongoose');
+// Sub‐schema for each quiz detail entry
+const QuizDetailSchema = new Schema(
+    {
+        // matches "questions_id" in Atlas
+        questions_id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Question',
+            required: true
+        },
+        question_answer: {
+            type: String,
+            required: true
+        },
+        question_score: {
+            type: Number,
+            required: true
+        },
+        time_begin: {
+            type: Date,
+            required: true
+        },
+        time_end: {
+            type: Date,
+            required: true
+        }
+    },
+    { _id: false } // prevent separate _id for each subdocument
+)
 
-const QuizDetailSchema = new mongoose.Schema({
-    questions_id:   { type: mongoose.Schema.Types.ObjectId, ref: 'Question', required: true },
-    question_answer:{ type: String, default: '' },
-    question_score: { type: Number, default: 0 },
-    time_begin:     { type: Date, default: Date.now },
-    time_end:       { type: Date, default: Date.now }
-}, { _id: false });
+// Main Player schema
+const PlayerSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true
+        },
+        // you did not show "username" in Atlas dump, but if you store it:
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            index: true
+        },
+        rank: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        quiz_details: {
+            type: [QuizDetailSchema],
+            default: []
+        },
+        // matches your "rooms_id"
+        rooms_id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Room',
+            required: true,
+            index: true
+        },
+        score_total: {
+            type: Number,
+            required: true,
+            default: 0
+        }
+    },
+    {
+        timestamps: true, // auto‐adds createdAt & updatedAt
+        versionKey: '__v' // your dump shows "__v": 0
+    }
+)
 
-const PlayerSchema = new mongoose.Schema({
-    name:          { type: String, required: true },
-    rank:          { type: Number, default: 0 },
-    quiz_details:  { type: [QuizDetailSchema], default: [] },
-    rooms_id:      { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
-    score_total:   { type: Number, default: 0 },
-    createdAt:     { type: Date, default: Date.now }
-});
-
-module.exports = mongoose.model('Player', PlayerSchema);
+module.exports = mongoose.model('Player', PlayerSchema)
