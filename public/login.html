@@ -3,23 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Login | Code Arena</title>
+  <!-- Link to global styles and themed font -->
   <link rel="stylesheet" href="/images/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
 </head>
 <body>
+<!-- Main container for login page -->
 <div class="container">
+  <!-- Page heading prompting user to log in -->
   <h1 class="title">Welcome Back</h1>
   <p class="subtitle">Enter your credentials to begin your coding quest.</p>
 
+  <!-- Login form container -->
   <div class="code-container">
+    <!-- Username input -->
     <label for="username">Username:</label>
     <input type="text" id="username" required />
 
+    <!-- Password input -->
     <label for="password">Password:</label>
     <input type="password" id="password" required />
 
+    <!-- Button to trigger login -->
     <button class="execute-button" onclick="loginUser()">Login</button>
 
+    <!-- Link to registration page -->
     <p style="text-align:center; margin-top: 10px;">
       Don't have an account? <a href="register.html" style="color: gold;">Register here</a>
     </p>
@@ -27,15 +35,24 @@
 </div>
 
 <script>
+  /**
+   * loginUser()
+   * - Reads username & password from inputs
+   * - Sends POST request to /api/auth/login
+   * - On success: stores JWT and username, redirects to difficulty selection
+   * - On failure: shows appropriate alert
+   */
   async function loginUser() {
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
 
+    // Validate inputs
     if (!username || !password) {
       return alert("Please enter both username and password.");
     }
 
     try {
+      // Send credentials to backend
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,10 +61,10 @@
       const json = await res.json();
 
       if (res.ok && json.token) {
-        // store the JWT and username
+        // Store authentication data for future API calls
         localStorage.setItem("token", json.token);
         localStorage.setItem("user", JSON.stringify({ username: json.username }));
-        // redirect to the next page (e.g., difficulty selector or arena)
+        // Navigate to difficulty selection
         window.location.href = "difficulty.html";
       } else {
         alert("❌ Login failed: " + (json.error || "Invalid credentials"));

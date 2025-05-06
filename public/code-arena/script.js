@@ -1,24 +1,35 @@
 // public/code-arena/script.js
 
 // ─── GLOBAL STATE ─────────────────────────────────────────────
+// Track loaded questions and which one is current
 let questions = [];
 let currentQuestionIndex = 0;
+// Record the time when the page was loaded to calculate time spent on a question
 window.pageLoadTimestamp = Date.now();
 
 // ─── DOM HELPERS ──────────────────────────────────────────────
+// Simple helper to select a single DOM element by CSS selector
 function $(sel) { return document.querySelector(sel); }
 
 // ─── LANGUAGE SELECTION & DISPLAY ────────────────────────────
+// Mapping of language keys to display names
 const LANG_DISPLAY = { python: 'Python', cpp: 'C++', java: 'Java' };
+// Grab all the language buttons and the label element
 const langButtons  = document.querySelectorAll('.lang-btn');
 const langLabel    = document.getElementById('lang-label');
 
+/**
+ * setLanguage
+ *  - Saves the chosen language to localStorage
+ *  - Updates the label in the UI to reflect the selection
+ */
 function setLanguage(langKey) {
     localStorage.setItem('selectedLanguage', langKey);
     const pretty = LANG_DISPLAY[langKey] || langKey;
     if (langLabel) langLabel.textContent = pretty;
 }
 
+// Initialize language from localStorage on page load
 ;(function initLanguage() {
     const saved = localStorage.getItem('selectedLanguage') || 'python';
     setLanguage(saved);
@@ -27,6 +38,7 @@ function setLanguage(langKey) {
     });
 })();
 
+// Add click handlers to each language button
 langButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         langButtons.forEach(b => b.classList.remove('active'));
@@ -36,6 +48,12 @@ langButtons.forEach(btn => {
 });
 
 // ─── AUTH & LOAD QUESTIONS ───────────────────────────────────
+/**
+ * checkLoginStatus
+ *  - Verifies that a valid token and user info exist in localStorage
+ *  - Redirects to login page if not authenticated
+ *  - Updates the avatar’s speech bubble with a welcome message
+ */
 function checkLoginStatus() {
     const token   = localStorage.getItem('token'),
         userRaw = localStorage.getItem('user');
@@ -53,6 +71,12 @@ function checkLoginStatus() {
     return true;
 }
 
+/**
+ * loadQuestions
+ *  - Fetches the list of questions from the backend API
+ *  - Starts a session on the server for this lobby
+ *  - Calls displayQuestion to show the first question
+ */
 async function loadQuestions() {
     if (!checkLoginStatus()) return;
     try {
@@ -64,9 +88,9 @@ async function loadQuestions() {
         if (lobbyCode) {
             const qIDs = questions.map(q => q.id);
             await fetch('/api/session/start', {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lobbyCode, questions: qIDs })
+                body:    JSON.stringify({ lobbyCode, questions: qIDs })
             });
         }
         displayQuestion();
@@ -76,6 +100,11 @@ async function loadQuestions() {
     }
 }
 
+// ─── DISPLAY & NAVIGATION ────────────────────────────────────
+/**
+ * displayQuestion
+ *  - Renders the current question’s title and hides/shows its description
+ */
 function displayQuestion() {
     const el = $('#question');
     if (!el) return;
@@ -94,6 +123,11 @@ function displayQuestion() {
     };
 }
 
+/**
+ * nextQuestion
+ *  - Advances to the next question in the array (wraps around)
+ *  - Calls displayQuestion to update the UI
+ */
 function nextQuestion() {
     if (!questions.length) return;
     currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
@@ -101,6 +135,11 @@ function nextQuestion() {
 }
 
 // ─── ENTRY‑POINT DETECTION ───────────────────────────────────
+/**
+ * hasMain
+ *  - Checks if the user’s code already defines a main entry point
+ *    (so we know whether to wrap it in our harness)
+ */
 function hasMain(code, language) {
     if (language === 'python') {
         return /if\s+__name__\s*==\s*['"]__main__['"]/.test(code);
@@ -110,6 +149,13 @@ function hasMain(code, language) {
 }
 
 // ─── RUN → EXECUTE → SUBMIT ──────────────────────────────────
+/**
+ * runAndSubmit
+ *  1) Sends code to /api/execute (with or without harness)
+ *  2) Displays raw program output
+ *  3) Submits output for scoring to /api/session/submit
+ *  4) Alerts the user and refreshes the leaderboard
+ */
 async function runAndSubmit() {
     const outputEl = $('#output');
     outputEl.innerText = '⏳ Running your code…';
@@ -118,7 +164,7 @@ async function runAndSubmit() {
     const language  = localStorage.getItem('selectedLanguage') || 'python';
     const q         = questions[currentQuestionIndex];
     const lobbyCode = localStorage.getItem('lobbyCode');
-    const user      = JSON.parse(localStorage.getItem('user')||'{}');
+    const user      = JSON.parse(localStorage.getItem('user') || '{}');
     const username  = user.username || 'guest';
     const timeTaken = Math.floor((Date.now() - window.pageLoadTimestamp) / 1000);
 
@@ -127,21 +173,16 @@ async function runAndSubmit() {
         return;
     }
 
-    // Decide if we should skip the Two‑Sum harness
+    // Determine whether to bypass harness (user has their own main)
     const raw = hasMain(code, language);
 
-    // 1) Execute (raw = true → no wrapping; raw = false → harness for Two‑Sum)
     let execResult;
     try {
+        // Call the execution endpoint
         const execResp = await fetch('/api/execute', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({
-                code,
-                language,
-                questionId: q.id,
-                raw
-            })
+            body:    JSON.stringify({ code, language, questionId: q.id, raw })
         });
         if (!execResp.ok) throw new Error(await execResp.text());
         execResult = await execResp.json();
@@ -150,24 +191,17 @@ async function runAndSubmit() {
         return console.error('Execution error:', err);
     }
 
-    // 2) Show runtime output exactly
+    // 2) Show runtime output exactly as returned
     const programOutput = String(execResult.output || '').trim();
     outputEl.innerText = programOutput || '(no output)';
 
-    // 3) Submit for scoring (Two‑Sum only; raw runs won’t score)
+    // 3) Submit for scoring (only harnessed runs will actually score)
     let submission;
     try {
         const subResp = await fetch('/api/session/submit', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({
-                lobbyCode,
-                username,
-                questionId: q.id,
-                code,
-                timeTaken,
-                language
-            })
+            body:    JSON.stringify({ lobbyCode, username, questionId: q.id, code, timeTaken, language })
         });
         submission = await subResp.json();
         if (!subResp.ok) throw new Error(submission.error || subResp.statusText);
@@ -176,7 +210,7 @@ async function runAndSubmit() {
         return console.error('Submission error:', err);
     }
 
-    // 4) Notify & update leaderboard
+    // 4) Alert result and update leaderboard
     if (submission.correct) {
         alert(`✅ Correct! +${submission.scoreIncrement} pts\nTotal: ${submission.totalScore}`);
     } else {
@@ -192,6 +226,10 @@ async function runAndSubmit() {
 }
 
 // ─── RENDER LEADERBOARD ─────────────────────────────────────
+/**
+ * renderLeaderboard
+ *  - Populates the #leaderboard element with usernames and scores
+ */
 function renderLeaderboard(scores) {
     const container = $('#leaderboard');
     if (!container) return;
@@ -206,16 +244,23 @@ function renderLeaderboard(scores) {
 }
 
 // ─── MUSIC & LOGOUT ─────────────────────────────────────────
+/** toggleMusic: plays or pauses background arena music */
 function toggleMusic() {
     const audio = $('#arenaMusic');
     if (audio) audio.paused ? audio.play() : audio.pause();
 }
+/** logout: clear storage and redirect to login page */
 function logout() {
     localStorage.clear();
     window.location.href = '/login.html';
 }
 
 // ─── PAGE INIT ───────────────────────────────────────────────
+/**
+ * On DOMContentLoaded:
+ *  - Ensure lobbyCode / user are set in localStorage
+ *  - Check auth, load questions, and wire up UI handlers
+ */
 window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     if (params.has('code')) {
@@ -229,6 +274,7 @@ window.addEventListener('DOMContentLoaded', () => {
     checkLoginStatus();
     loadQuestions();
 
+    // Leaderboard button opens the modal and fetches scores
     $('#leaderboardBtn').onclick = async () => {
         $('#leaderboardModal').style.display = 'flex';
         const lobbyCode = localStorage.getItem('lobbyCode');

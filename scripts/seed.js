@@ -1,18 +1,26 @@
 // scripts/seed.js
 
-require('dotenv').config();
-const mongoose = require('mongoose');
-const Question = require('../models/Question');
+require('dotenv').config();                          // Load environment variables from .env
+const mongoose = require('mongoose');                 // MongoDB object modeling
+const Question = require('../models/Question');       // Question model with testCases field
 
+/**
+ * Main seed function:
+ * - Connects to MongoDB
+ * - Updates each question document with its test cases
+ * - Disconnects from MongoDB
+ */
 async function seed() {
     try {
+        // Determine MongoDB connection URI (Atlas or fallback)
         const uri = process.env.MONGO_URI ||
             'mongodb+srv://caUser:sfac123@codearena.fo5no.mongodb.net/CodeArena?retryWrites=true&w=majority';
-        await mongoose.connect(uri);
+        await mongoose.connect(uri);                 // Connect to MongoDB
         console.log('✅ Connected to MongoDB');
 
+        // Define the test-case sets for each question ID
         const cases = [
-            // ── Two Sum ───────────────────────────────────────────────
+            // ── Two Sum question harness definitions ────────────────────
             {
                 id: '67db5a5a84386134e0f8c68f',
                 testCases: [
@@ -20,7 +28,7 @@ async function seed() {
                     { input: '3 2 4 6\n',       expectedOutput: '[1,2]\n' }
                 ]
             },
-            // ── Valid Parenthesis ────────────────────────────────────
+            // ── Valid Parenthesis question test cases ────────────────────
             {
                 id: '67e04feb90ec517221de2b7f',
                 testCases: [
@@ -30,7 +38,7 @@ async function seed() {
                     { input: '{[]}\n',    expectedOutput: 'true\n' }
                 ]
             },
-            // ── Merge Two Sorted Lists ──────────────────────────────
+            // ── Merge Two Sorted Lists question cases ────────────────────
             {
                 id: '67e0969490ec517221de2b83',
                 testCases: [
@@ -40,10 +48,11 @@ async function seed() {
             }
         ];
 
+        // Iterate over each question and update its testCases array in the database
         for (const { id, testCases } of cases) {
             const res = await Question.updateOne(
-                { _id: id },            // let Mongoose cast the string to ObjectId
-                { $set: { testCases } }
+                { _id: id },            // Filter by question ID (string cast to ObjectId)
+                { $set: { testCases } }  // Set the testCases field
             );
             console.log(
                 `Question ${id} → matched ${res.matchedCount}, modified ${res.modifiedCount}`
@@ -54,10 +63,10 @@ async function seed() {
     } catch (err) {
         console.error('❌ Seeding error:', err);
     } finally {
-        await mongoose.disconnect();
+        await mongoose.disconnect();                  // Disconnect from MongoDB
         console.log('🔌 Disconnected from MongoDB');
-        process.exit(0);
+        process.exit(0);                              // Exit script
     }
 }
 
-seed();
+seed();                                             // Execute the seed function

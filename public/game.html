@@ -1,190 +1,172 @@
+<!-- public/game.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Game | Code Arena</title>
 
-  <!-- External styles and font -->
+  <!-- Link to external CSS for theming and fonts -->
   <link rel="stylesheet" href="/images/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
 
-
-  <!-- Socket.IO client -->
+  <!-- Load Socket.IO client for real‑time lobby updates -->
   <script src="/socket.io/socket.io.js" defer></script>
-
-  <!-- game logic (defer so DOM is ready, and module to allow top‑level await) -->
+  <!-- Load main game logic; defer so DOM is ready and module allows top‑level await -->
   <script type="module" src="/code-arena/script.js" defer></script>
-
 </head>
 
 <body>
-  <div class="container">
-    <!-- Background arena sound and toggle -->
-    <audio id="arenaMusic" src="/images/sound.wav" loop></audio>
-    <button class="music-btn" onclick="toggleMusic()">🎵 Music</button>
+<div class="container">
+  <!-- Background music element -->
+  <audio id="arenaMusic" src="/images/sound.wav" loop></audio>
+  <!-- Button to toggle music on/off -->
+  <button class="music-btn" onclick="toggleMusic()">🎵 Music</button>
 
-    <!-- Leaderboard open button -->
-    <button class="leaderboard-btn" id="leaderboardBtn">🏛️ View Leaderboard</button>
+  <!-- Button to open leaderboard modal -->
+  <button class="leaderboard-btn" id="leaderboardBtn">🏛️ View Leaderboard</button>
 
-    <!-- Leaderboard modal structure -->
-    <div id="leaderboardModal" class="modal">
-      <div class="modal-content roman-theme">
-        <span class="close-btn" id="closeLeaderboard">&times;</span>
-        <h2>🏆 Arena Rankings</h2>
-        <ul class="leaderboard-list" id="leaderboard">
-          <!-- Leaderboard scores will be loaded here -->
-        </ul>
-      </div>
+  <!-- Leaderboard modal structure -->
+  <div id="leaderboardModal" class="modal">
+    <div class="modal-content roman-theme">
+      <!-- Close button for modal -->
+      <span class="close-btn" id="closeLeaderboard">&times;</span>
+      <h2>🏆 Arena Rankings</h2>
+      <!-- Container for dynamic leaderboard entries -->
+      <ul class="leaderboard-list" id="leaderboard"></ul>
     </div>
-
-    <!-- Page title -->
-    <h1 class="title wave-text shimmer-effect">Welcome to the Arena</h1>
-
-    <!-- Spacer for layout -->
-    <div class="spacer"></div>
-
-    <!-- Challenge instructions -->
-    <div class="question-banner">
-      ⚔️ <strong>Your Challenge Awaits!</strong><br>
-      🧠 Solve this to prove your might.
-    </div>
-
-    <!-- Avatar and speech bubble
-    <img id="avatarImg" src="avatar_easy.png" alt="Avatar" class="avatar">
-    <div class="avatar-speech" id="avatarSpeech">⚔️ Ready for battle?</div>
-  -->
-
-
-    <div class="avatar-container">
-      <img id="avatarImg" src="/images/avatar_easy.png" alt="Avatar" class="avatar">
-      <div class="avatar-speech" id="avatarSpeech">⚔️ Ready for battle?</div>
-    </div>
-
-    <!-- Question display -->
-    <h2 id="question" class="quiz-question">Loading question...</h2>
-
-    <!-- Language selector -->
-    <div class="quiz-section">
-      <div class="language-selection">
-        <div class="banner-text">Choose Your Language</div>
-        <div class="language-options">
-          <button class="lang-btn" data-lang="python">Python</button>
-          <button class="lang-btn" data-lang="cpp">C++</button>
-          <button class="lang-btn" data-lang="java">Java</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="current-language"
-         style="margin-top:8px; color: gold; font-size:1.1rem;">
-      Language: <span id="lang-label">Python</span>
-    </div>
-
-
-
-  <!-- Code input area -->
-    <div class="banner-text">Write Your Code</div>
-    <div class="transparent-codebox">
-      <textarea id="codeInput" class="clean-editor" placeholder="// Type your code here..."></textarea>
-    </div>
-
-    <!-- Code action buttons -->
-    <button class="execute-button" onclick="runAndSubmit()">Run Code</button>
-    <button class="execute-button" onclick="nextQuestion()">Next Question</button>
-
-    <!-- Output section -->
-    <h3>Output:</h3>
-    <pre id="output">Your output will appear here.</pre>
-    <!-- Multiplier badge (only shown on correct answers) -->
-    <p id="multiplierDisplay" style="margin-top:4px; font-style:italic; color:#aaf;"></p>
-
-    <!-- Logout button -->
-    <button class="logout-button" onclick="logout()">Logout</button>
   </div>
 
+  <!-- Page title with wave & shimmer animations -->
+  <h1 class="title wave-text shimmer-effect">Welcome to the Arena</h1>
 
+  <!-- Spacer for visual separation -->
+  <div class="spacer"></div>
 
-  <!-- Load avatar image based on selected difficulty -->
-  <script>
-    const difficulty = localStorage.getItem('difficulty');
-    const avatarImg = document.getElementById('avatarImg');
-    if (difficulty && ['easy', 'medium', 'hard'].includes(difficulty)) {
-      avatarImg.src = `/images/avatar_${difficulty}.png`;
+  <!-- Banner showing instructions to the user -->
+  <div class="question-banner">
+    ⚔️ <strong>Your Challenge Awaits!</strong><br>
+    🧠 Solve this to prove your might.
+  </div>
+
+  <!-- Avatar and speech bubble container -->
+  <div class="avatar-container">
+    <!-- Avatar image changes based on selected difficulty -->
+    <img id="avatarImg" src="/images/avatar_easy.png" alt="Avatar" class="avatar">
+    <div class="avatar-speech" id="avatarSpeech">⚔️ Ready for battle?</div>
+  </div>
+
+  <!-- Element to display the current question -->
+  <h2 id="question" class="quiz-question">Loading question...</h2>
+
+  <!-- Language selection UI -->
+  <div class="quiz-section">
+    <div class="language-selection">
+      <div class="banner-text">Choose Your Language</div>
+      <div class="language-options">
+        <button class="lang-btn" data-lang="python">Python</button>
+        <button class="lang-btn" data-lang="cpp">C++</button>
+        <button class="lang-btn" data-lang="java">Java</button>
+      </div>
+    </div>
+  </div>
+  <!-- Display currently selected language -->
+  <div id="current-language" style="margin-top:8px; color: gold; font-size:1.1rem;">
+    Language: <span id="lang-label">Python</span>
+  </div>
+
+  <!-- Code editor area -->
+  <div class="banner-text">Write Your Code</div>
+  <div class="transparent-codebox">
+    <textarea id="codeInput" class="clean-editor" placeholder="// Type your code here..."></textarea>
+  </div>
+
+  <!-- Buttons to run code or load next question -->
+  <button class="execute-button" onclick="runAndSubmit()">Run Code</button>
+  <button class="execute-button" onclick="nextQuestion()">Next Question</button>
+
+  <!-- Area to display program output -->
+  <h3>Output:</h3>
+  <pre id="output">Your output will appear here.</pre>
+  <!-- Placeholder for difficulty multiplier badge -->
+  <p id="multiplierDisplay" style="margin-top:4px; font-style:italic; color:#aaf;"></p>
+
+  <!-- Logout button -->
+  <button class="logout-button" onclick="logout()">Logout</button>
+</div>
+
+<!-- Script to set avatar image based on saved difficulty -->
+<script>
+  const difficulty = localStorage.getItem('difficulty');
+  const avatarImg = document.getElementById('avatarImg');
+  if (difficulty && ['easy', 'medium', 'hard'].includes(difficulty)) {
+    avatarImg.src = `/images/avatar_${difficulty}.png`;
+  }
+</script>
+
+<!-- Script to animate the title letters in a wave pattern -->
+<script>
+  const title = document.querySelector('.wave-text');
+  const text = title.textContent;
+  title.setAttribute("data-text", text);
+  title.innerHTML = [...text].map(char =>
+          `<span>${char === " " ? "&nbsp;" : char}</span>`).join("");
+</script>
+
+<!-- Simple logout redirect (fallback) -->
+<script>
+  function logout() {
+    window.location.href = 'login.html';
+  }
+</script>
+
+<!-- Rotate through fun avatar messages -->
+<script>
+  const messages = [
+    "⚔️ Ready for battle?",
+    "🧠 Think wisely, warrior!",
+    "🔥 Let the code clash begin!",
+    "🏹 One question at a time!"
+  ];
+  const speech = document.getElementById("avatarSpeech");
+  let index = 0;
+  setInterval(() => {
+    if (speech) {
+      index = (index + 1) % messages.length;
+      speech.textContent = messages[index];
     }
-  </script>
+  }, 10000);
+</script>
 
-  <!-- Add wave animation to each letter in the title -->
-  <script>
-    const title = document.querySelector('.wave-text');
-    const text = title.textContent;
-    title.setAttribute("data-text", text);
-    title.innerHTML = [...text].map(char =>
-      `<span>${char === " " ? "&nbsp;" : char}</span>`).join("");
-  </script>
-
-  <!-- Simple logout -->
-  <script>
-    function logout() {
-      window.location.href = 'login.html';
+<!-- Legacy leaderboard fetch fallback (can be removed after migration) -->
+<script>
+  (function setupLeaderboard() {
+    const btn = document.getElementById('leaderboardBtn');
+    const modal = document.getElementById('leaderboardModal');
+    const closeBtn = document.getElementById('closeLeaderboard');
+    const listEl = document.getElementById('leaderboard');
+    if (btn && modal && closeBtn && listEl) {
+      btn.addEventListener('click', async () => {
+        try {
+          const res = await fetch('/api/leaderboard');
+          const data = await res.json();
+          listEl.innerHTML = '';
+          data.forEach(entry => {
+            const li = document.createElement('li');
+            li.textContent = `${entry.icon} ${entry.name} – ${entry.points} pts`;
+            listEl.appendChild(li);
+          });
+          modal.style.display = 'flex';
+        } catch {
+          listEl.innerHTML = '<li>⚠️ Failed to load leaderboard.</li>';
+          modal.style.display = 'flex';
+        }
+      });
+      closeBtn.addEventListener('click', () => modal.style.display = 'none');
+      window.addEventListener('click', e => {
+        if (e.target === modal) modal.style.display = 'none';
+      });
     }
-  </script>
-  <script>
-    const messages = [
-      "⚔️ Ready for battle?",
-      "🧠 Think wisely, warrior!",
-      "🔥 Let the code clash begin!",
-      "🏹 One question at a time!"
-    ];
-
-    const speech = document.getElementById("avatarSpeech");
-    let index = 0;
-
-    setInterval(() => {
-      if (speech) {
-        index = (index + 1) % messages.length;
-        speech.textContent = messages[index];
-      }
-    }, 10000);
-  </script>
-  <script>
-    // Dynamically load leaderboard from backend
-    (function setupLeaderboard() {
-      const btn = document.getElementById('leaderboardBtn');
-      const modal = document.getElementById('leaderboardModal');
-      const closeBtn = document.getElementById('closeLeaderboard');
-      const listEl = document.getElementById('leaderboard');
-
-      if (btn && modal && closeBtn && listEl) {
-        btn.addEventListener('click', async () => {
-          try {
-            const res = await fetch('/api/leaderboard');
-            const data = await res.json();
-            listEl.innerHTML = '';
-            data.forEach(entry => {
-              const li = document.createElement('li');
-              li.textContent = `${entry.icon} ${entry.name} – ${entry.points} pts`;
-              listEl.appendChild(li);
-            });
-            modal.style.display = 'flex';
-          } catch {
-            listEl.innerHTML = '<li>⚠️ Failed to load leaderboard.</li>';
-            modal.style.display = 'flex';
-          }
-        });
-
-        closeBtn.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-
-        window.addEventListener('click', (e) => {
-          if (e.target === modal) modal.style.display = 'none';
-        });
-      }
-    })();
-    </script>
-
-
-
-
+  })();
+</script>
 </body>
 </html>

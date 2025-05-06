@@ -3,36 +3,37 @@
 /**
  * Module dependencies.
  */
-var app = require('../app');
-var debug = require('debug')('untitled2:server');
-var http = require('http');
-var socketIo = require('socket.io');
+var app = require('../app');                              // Import the Express application
+var debug = require('debug')('untitled2:server');         // Debugging utility
+var http = require('http');                               // Node's HTTP module
+var socketIo = require('socket.io');                      // Socket.IO for real‑time communication
 
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var port = normalizePort(process.env.PORT || '3000');    // Determine port number
+app.set('port', port);                                    // Make port available via app
 
 /**
  * Create HTTP server.
  */
-var server = http.createServer(app);
+var server = http.createServer(app);                      // Wrap Express app in an HTTP server
 
 /**
  * Attach Socket.IO to the server.
  */
-var io = socketIo(server);
+var io = socketIo(server);                                // Initialize Socket.IO with the HTTP server
 
-// Set Socket.IO instance on the Express app so it can be accessed in routes (e.g., in session.js)
+// Expose Socket.IO instance on the Express app (so routes can emit events)
 app.set('io', io);
 
-// Socket.IO connection handler
+/**
+ * Socket.IO connection handler
+ */
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  // Custom event: joinLobby
-  // When a client wants to join a lobby, they should emit 'joinLobby' with { lobbyCode, username }
+  // Handle custom "joinLobby" event from clients
   socket.on('joinLobby', (data) => {
     if (!data.lobbyCode || !data.username) {
       console.error('joinLobby event received with missing data');
@@ -40,14 +41,15 @@ io.on('connection', (socket) => {
     }
     console.log(`${data.username} is joining lobby ${data.lobbyCode}`);
 
-    // Join the specified room (lobby)
-    socket.join(data.lobbyCode);
+    socket.join(data.lobbyCode);                          // Add this socket to the room
 
-    // Broadcast to the room that a new user has joined
-    io.to(data.lobbyCode).emit('lobbyUpdate', { message: `${data.username} has joined the lobby` });
+    // Notify all clients in the room that a new user joined
+    io.to(data.lobbyCode).emit('lobbyUpdate', {
+      message: `${data.username} has joined the lobby`
+    });
   });
 
-  // Additional custom events can be added here (e.g., in-game events, answer submissions, etc.)
+  // Additional events (e.g., answer submissions) could be handled here
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
@@ -55,7 +57,7 @@ io.on('connection', (socket) => {
 });
 
 /**
- * Listen on provided port, on all network interfaces.
+ * Listen on the configured port.
  */
 server.listen(port, () => {
   debug('Express server listening on port ' + port);
@@ -68,14 +70,17 @@ server.on('listening', onListening);
  */
 function normalizePort(val) {
   var portNum = parseInt(val, 10);
+
   if (isNaN(portNum)) {
-    // named pipe
+    // Named pipe
     return val;
   }
+
   if (portNum >= 0) {
-    // port number
+    // Port number
     return portNum;
   }
+
   return false;
 }
 
@@ -86,7 +91,12 @@ function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+  var bind = typeof port === 'string'
+      ? 'Pipe ' + port
+      : 'Port ' + port;
+
+  // Handle specific listen errors with messages and exit
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -106,6 +116,8 @@ function onError(error) {
  */
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+  var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }

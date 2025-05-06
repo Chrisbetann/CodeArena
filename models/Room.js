@@ -1,7 +1,21 @@
 // models/Room.js
-const mongoose = require('mongoose')
-const { Schema } = mongoose
 
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+
+/**
+ * RoomSchema
+ * Represents a game “room” or lobby:
+ * - name:          human‐friendly room name
+ * - created_by:    username of the creator
+ * - code:          unique numeric room code for joining
+ * - question_set:  array of Question ObjectIds assigned to this room
+ * - players:       array of Player ObjectIds currently in the room
+ * - player_limit:  maximum number of players allowed (0 = unlimited)
+ * - time_limit_sec: optional per‐room time limit, in seconds
+ *
+ * timestamps creates a createdAt only (no updatedAt), versionKey tracks schema version.
+ */
 const RoomSchema = new Schema(
     {
         name: {
@@ -40,9 +54,10 @@ const RoomSchema = new Schema(
         }
     },
     {
-        timestamps: { createdAt: true, updatedAt: false }, // only createdAt
-        versionKey: '__v'
+        timestamps: { createdAt: true, updatedAt: false }, // only record creation time
+        versionKey: '__v'                                  // match existing dumps
     }
-)
+);
 
-module.exports = mongoose.model('Room', RoomSchema)
+// Export the Room model for use in lobby and session management
+module.exports = mongoose.model('Room', RoomSchema);

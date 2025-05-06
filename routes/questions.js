@@ -1,18 +1,29 @@
 // routes/questions.js
+// ─────────────────────────────────────────────────────────────────────────────
+// Exposes the question bank (coding challenges) to clients.
+// ─────────────────────────────────────────────────────────────────────────────
+
 const express  = require('express');
 const router   = express.Router();
 const Question = require('../models/Question');
 
 /**
  * GET /api/questions
- * Returns an array of all questions with testCases included.
+ *
+ * Fetches all coding questions from the database, including:
+ * - id (stringified ObjectId)
+ * - title, level, description
+ * - content frames, hints, complexity info
+ * - testCases for automated judging
+ *
+ * Returns an array of question objects.
  */
 router.get('/', async (req, res, next) => {
     try {
-        // Fetch plain JS objects for efficiency
+        // Get raw Mongo documents as plain JS objects (lean => better perf)
         const docs = await Question.find({}).lean();
 
-        // Map _id to id and include all needed fields
+        // Transform each document into the shape the frontend expects
         const questions = docs.map(q => ({
             id:                   q._id.toString(),
             title:                q.title,
@@ -25,9 +36,10 @@ router.get('/', async (req, res, next) => {
             testCases:            q.testCases || []
         }));
 
-        res.json(questions);
+        return res.json(questions);
     } catch (err) {
-        next(err);
+        console.error('Error loading questions:', err);
+        return next(err);
     }
 });
 

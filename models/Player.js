@@ -1,11 +1,20 @@
 // models/Player.js
-const mongoose = require('mongoose')
-const { Schema } = mongoose
 
-// Sub‐schema for each quiz detail entry
+const mongoose = require('mongoose');
+const { Schema } = mongoose; // Destructure Schema constructor from Mongoose
+
+/**
+ * QuizDetailSchema (sub‐schema)
+ * Stores details of an individual quiz attempt:
+ * - questions_id:   reference to the Question document
+ * - question_answer: the answer provided by the player
+ * - question_score:  score earned for this question
+ * - time_begin:      when the player started this question
+ * - time_end:        when the player submitted this question
+ * Note: _id is disabled to avoid separate document IDs for each entry.
+ */
 const QuizDetailSchema = new Schema(
     {
-        // matches "questions_id" in Atlas
         questions_id: {
             type: Schema.Types.ObjectId,
             ref: 'Question',
@@ -28,17 +37,26 @@ const QuizDetailSchema = new Schema(
             required: true
         }
     },
-    { _id: false } // prevent separate _id for each subdocument
-)
+    { _id: false } // Prevent an automatic _id for each quiz detail subdocument
+);
 
-// Main Player schema
+/**
+ * PlayerSchema
+ * Represents a player in the system:
+ * - name:         display name of the player
+ * - username:     unique identifier for login and leaderboard
+ * - rank:         current rank or level of the player
+ * - quiz_details: array of QuizDetailSchema entries for past attempts
+ * - rooms_id:     reference to the Room (lobby) the player belongs to
+ * - score_total:  cumulative score across all sessions
+ * Additionally, timestamps are enabled to record when each Player doc is created/updated, and versionKey is set.
+ */
 const PlayerSchema = new Schema(
     {
         name: {
             type: String,
             required: true
         },
-        // you did not show "username" in Atlas dump, but if you store it:
         username: {
             type: String,
             required: true,
@@ -54,7 +72,6 @@ const PlayerSchema = new Schema(
             type: [QuizDetailSchema],
             default: []
         },
-        // matches your "rooms_id"
         rooms_id: {
             type: Schema.Types.ObjectId,
             ref: 'Room',
@@ -68,9 +85,10 @@ const PlayerSchema = new Schema(
         }
     },
     {
-        timestamps: true, // auto‐adds createdAt & updatedAt
-        versionKey: '__v' // your dump shows "__v": 0
+        timestamps: true,   // Automatically add createdAt and updatedAt fields
+        versionKey: '__v'   // Use __v to track document version (matches existing dumps)
     }
-)
+);
 
-module.exports = mongoose.model('Player', PlayerSchema)
+// Export the Player model for use in authentication, scoring, and session management
+module.exports = mongoose.model('Player', PlayerSchema);
